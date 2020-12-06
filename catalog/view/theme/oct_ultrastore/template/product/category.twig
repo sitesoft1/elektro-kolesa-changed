@@ -1,0 +1,185 @@
+{{ header }}
+<div id="product-category" class="container">
+	{{ oct_breadcrumbs }}
+	<div class="row">
+		<div class="col-lg-12">
+			<h1 class="us-main-shop-title">{{ heading_title }}</h1>
+		</div>
+	</div>
+	<div class="content-top-box">{{ content_top }}</div>
+	<div class="us-category-content">
+		<div class="row">
+			{{ column_left }}
+			{% if column_left and column_right %}
+			{% set class = 'col-md-6 is-cols' %}
+			{% elseif column_left or column_right %}
+			{% set class = 'col-md-9' %}
+			{% else %}
+			{% set class = 'col-md-12 no-col' %}
+			{% endif %}
+			<div id="content" class="{{ class }}">
+				{% if oct_ultrastore_data.category_desc_position is defined and oct_ultrastore_data.category_desc_position == 'top' %}
+					{% if thumb or description %}
+					<div class="us-category-description">
+						<div class="d-flex">
+							{% if thumb %}
+							<div class="us-category-description-img"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" /></div>
+							{% endif %}
+							{% if description %}
+							<div id="us-category-description"{% if categories or products %} class="us-category-description-cont"{% endif %}>
+								{% if description|length > 500  and (categories or products) %}
+								<div class="us-category-description-opacity"></div>
+								{% endif %}
+								<div class="us-category-description-text">{{ description }}</div>
+							</div>
+							{% endif %}
+						</div>
+						{% if description and description|length > 500  and (categories or products) %}
+						<div class="us-show-more{% if thumb %} with-thumb{% endif %}">
+							<a href="javascript:void(0);" class="us-show-more-link" id="us-show-more-link"><span class="us-show-more-expand">{{ oct_expand }}</span><span class="us-show-more-rollup">{{ oct_collapse }}</span><i class="fas fa-angle-down"></i></a>
+						</div>
+						<script>
+							$(function () {
+								$('#us-show-more-link').on('click', function () {
+									$(this).toggleClass('clicked');
+									$('.us-category-description-cont').toggleClass('expanded');
+									$('.us-category-description-opacity').toggleClass('hidden');
+								});
+							});
+						</script>
+						{% endif %}
+					</div>
+					{% endif %}
+				{% endif %}
+				{% if categories %}
+				<div class="us-subcategory">
+					<div id="us-subcat" class="row subcat-row">
+						{% for category in categories %}
+						<div class="col-3 col-xl-2 us-item">
+							<a class="subcat-item d-flex flex-column align-items-center" href="{{ category.href }}">
+							<img class="subcat-item-img" src="{{ category.image }}" alt="{{ category.name }}" >
+							<span class="subcat-item-title">{{ category.name }}</span>
+							</a>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+				{% endif %}
+				{% if products %}
+					{% if oct_ultrastore_data.category_view_sort_oder is defined and (oct_ultrastore_data.category_view_sort_oder or oct_ultrastore_data.category_view_sort_oder == 'on') %}
+					<div class="us-category-sort-block d-flex justify-content-between">
+						<div class="sort-limit">
+							<select id="input-sort" class="sort-select" onchange="location = this.value;">
+								{% for sorts in sorts %}
+									{% if sorts.value == '%s-%s'|format(sort, order) %}
+										<option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+									{% else %}
+										<option value="{{ sorts.href }}">{{ sorts.text }}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+							<select id="input-limit" class="limit-select" onchange="location = this.value;">
+								{% for limits in limits %}
+									{% if limits.value == limit %}
+										<option value="{{ limits.href }}" selected="selected">{{ limits.text }}</option>
+									{% else %}
+										<option value="{{ limits.href }}">{{ limits.text }}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+						<div class="us-category-appearance btn-group">
+							<button type="button" id="list-view" class="us-category-appearance-btn" data-toggle="tooltip" data-placement="top" title="{{ button_list }}"><i class="fa fa-th-list"></i></button>
+							<button type="button" id="grid-view" class="us-category-appearance-btn" data-toggle="tooltip" data-placement="top" title="{{ button_grid }}"><i class="fa fa-th"></i></button>
+						</div>
+					</div>
+					{% endif %}
+					<div class="row">
+						{% for product in products %}
+						<div class="product-layout product-grid col-sm-4">
+							<div class="us-module-item d-flex flex-column">
+								<ul class="us-module-buttons-list">
+									<li class="us-module-buttons-item">
+										<a href="javascript:void(0);" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}" class="us-module-buttons-link us-module-buttons-wishlist"><i class="far fa-heart"></i></a>
+									</li>
+									<li class="us-module-buttons-item">
+										<a href="javascript:void(0);" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');" class="us-module-buttons-link us-module-buttons-compare"><i class="fas fa-sliders-h"></i></a>
+									</li>
+								</ul>
+								<div class="us-module-img">
+									<a href="{{ product.href }}">
+										<img src="{{ product.thumb }}"{% if oct_lazyload %} data-srcset="{{ product.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="img-fluid{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ product.name }}" title="{{ product.name }}" />
+									</a>
+								</div>
+								<div class="us-module-caption d-flex flex-column">
+									<div class="us-module-title flex-grow-1">
+										<a href="{{ product.href }}">{{ product.name }}</a>
+									</div>
+									{% if product.oct_model is not empty %}
+									<div class="us-module-model">{{ oct_view_model_cat }}{{ product.oct_model }}</div>
+									{% endif %}
+									{% if product.rating is not same as (false) %}
+									<div class="us-module-rating d-flex align-items-center justify-content-center">
+										<div class="us-module-rating-stars d-flex align-items-center">
+											{% for i in 1..5 %}
+											{% if product.rating < i %}
+											<span class="us-module-rating-star"></span>
+											{% else %}
+											<span class="us-module-rating-star us-module-rating-star-is"></span>
+											{% endif %}
+											{% endfor %}
+										</div>
+										<div class="us-module-reviews"><i class="fas fa-comment"><span>{{ product.reviews }}</span></i></div>
+									</div>
+									{% endif %}
+									{% if (product.description and product.description|length > 3) %}
+										<div class="us-product-list-description">{{ product.description }}</div>
+									{% endif %}
+									{% if product.price %}
+									<div class="us-module-price">
+										{% if not product.special %}
+										<span class="us-module-price-actual">{{ product.price }}</span>
+										{% else %}
+										<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
+										{% endif %}
+										{% if product.tax %}
+										<div class="price-tax">{{ text_tax }} {{ product.tax }}</div>
+										{% endif %}
+									</div>
+									{% endif %}
+									<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a>
+									<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">Быстрый заказ</a>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+					{{ pagination }}
+				{% endif %}
+				{% if oct_ultrastore_data.category_desc_position is defined and oct_ultrastore_data.category_desc_position == 'bottom' %}
+					{% if thumb or description %}
+					<div class="us-category-description">
+						<div class="d-flex">
+							{% if thumb %}
+							<div class="us-category-description-img"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" /></div>
+							{% endif %}
+							{% if description %}
+							<div id="us-category-description">
+								<div class="us-category-description-text">{{ description }}</div>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+					{% endif %}
+				{% endif %}
+				{% if not categories and not products and (description|striptags is empty) %}
+				<p>{{ text_empty }}</p>
+				<a href="{{ continue }}" class="us-module-btn mt-3 d-inline-block">{{ button_continue }}</a>
+				{% endif %}
+			</div>
+			{{ column_right }}
+		</div>
+	</div>
+	{{ content_bottom }}
+</div>
+{{ footer }}
