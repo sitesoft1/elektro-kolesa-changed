@@ -7169,3 +7169,15 @@ span.simple-step-delimiter:before {
 		transition: all .15s ease .05s;
 	}
 
+
+	.us-product-btn-quick:hover {
+		background-color: #666;
+		color: #fff;
+	}
+
+	.us-module-item:hover .us-product-btn-quick {
+		background-color: #666;
+		color: #FFF;
+	}
+
+
