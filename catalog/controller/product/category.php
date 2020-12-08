@@ -370,8 +370,9 @@ class ControllerProductCategory extends Controller {
 			if ($limit && ceil($product_total / $limit) > $page) {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. ($page + 1)), 'next');
 			}
-			
-			
+            
+            $this->document->addStyle('catalog/view/theme/oct_ultrastore/js/slick/slick.min.css');
+            $this->document->addScript('catalog/view/theme/oct_ultrastore/js/slick/slick.min.js');
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;
