@@ -31,7 +31,8 @@ $_['entry_price']              	  = 'Цена:';
 $_['oct_product_oneclick']		  = 'Купить в один клик';
 $_['oct_product_oneclick_enter']  = 'Введите номер телефона и мы перезвоним';
 $_['oct_product_oneclick_placeholder']  = 'Номер телефона';
-$_['oct_product_oneclickbuy']	  = 'Купить';
+//$_['oct_product_oneclickbuy']	  = 'Купить';
+$_['oct_product_oneclickbuy']	  = 'Купить в один клик';
 
 // Error
 $_['error_firstname']             = 'Имя должно быть от 1 до 32 символов!';
