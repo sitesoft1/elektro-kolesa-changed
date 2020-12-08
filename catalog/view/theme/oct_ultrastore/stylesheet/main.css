@@ -1655,7 +1655,7 @@ header {
 	display: block;
 	color: #FFF !important;
 	text-transform: uppercase;
-	background: #666;
+	background: #71BE00;
 	border-radius: 1px;
 	padding: 8px 0;
 	margin: 0 15px;
@@ -7171,13 +7171,17 @@ span.simple-step-delimiter:before {
 
 
 	.us-product-btn-quick:hover {
-		background-color: #666;
+		background-color: #71BE00;
 		color: #fff;
 	}
 
+
+	/*
 	.us-module-item:hover .us-product-btn-quick {
 		background-color: #666;
 		color: #FFF;
 	}
+	*/
+
 
 
