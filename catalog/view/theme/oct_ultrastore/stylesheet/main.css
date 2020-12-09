@@ -1629,8 +1629,12 @@ header {
 }
 
 .us-module-price {
-	margin-bottom: 40px;
+	margin-bottom: 60px;
 }
+
+#common-home .us-module-price {
+		margin-bottom: 15px;
+	}
 
 .us-module-price-old {
 	color: #CBCFD4;
@@ -6814,9 +6818,10 @@ button.us-close:hover {
 .product-grid .us-module-item {
 	padding-bottom: 52px;
 }
+
 .product-grid .us-module-cart-btn {
 	position: absolute;
-	bottom: 50px;
+	bottom: 60px;
 	left: 0;
 	right: 0;
 }
@@ -7161,7 +7166,7 @@ span.simple-step-delimiter:before {
 	.us-product-btn-quick {
 
 		position: absolute;
-		bottom: 5px;
+		bottom: 10px;
 		right: 0;
 		left: 0;
 		padding: 8px 0;
