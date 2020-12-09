@@ -51,7 +51,8 @@
 					{% endif %}
 				</div>
 				{% endif %}
-				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a>
+				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a>
+				<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">Купить в 1 клик</a>
 			</div>
 			{% endfor %}
 		</div>
@@ -117,7 +118,8 @@
 					{% endif %}
 				</div>
 				{% endif %}
-				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a>
+				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a>
+				<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">Купить в 1 клик</a>
 			</div>
 		</div>
 		{% endfor %}

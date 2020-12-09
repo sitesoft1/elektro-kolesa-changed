@@ -1662,6 +1662,17 @@ header {
 	transition: background .15s ease .05s;
 }
 
+.us-module-cart-btn-home{
+	display: block;
+	color: #FFF !important;
+	text-transform: uppercase;
+	background: #71BE00;
+	border-radius: 1px;
+	padding: 8px 0;
+	transition: background .15s ease .05s;
+	margin: 0 15px 45px 15px !important;
+}
+
 .us-no-stock .us-module-cart-btn {
 	background: #cecece;
 }
