@@ -7191,13 +7191,29 @@ span.simple-step-delimiter:before {
 		color: #fff;
 	}
 
-
-	/*
-	.us-module-item:hover .us-product-btn-quick {
-		background-color: #666;
-		color: #FFF;
+	.prmn-cmngr__content{
+		color:#E5E5E5;
 	}
-	*/
+
+	.prmn-cmngr__city .glyphicon-map-marker{
+		margin-right: 4px;
+	}
+
+	.prmn-cmngr__city{
+		border-bottom: 1px dashed;
+		padding-bottom: 2px;
+	}
+
+	.close:not(:disabled):not(.disabled) {
+		position: absolute !important;
+		right: 10px !important;
+		top: 10px !important;
+	}
+
+	.prmn-cmngr-cities__search-label{
+		margin-right: 8px;
+	}
+
 
 
 
