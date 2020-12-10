@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<!--[if IE 8 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie8"><![endif]-->
+<!--[if IE 9 ]><html dir="{{ direction }}" lang="{{ lang }}" class="ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html dir="{{ direction }}" lang="{{ lang }}">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>{{ title }}</title>
+<base href="{{ base }}" />
+{% if description %}
+<meta name="description" content="{{ description }}" />
+{% endif %}
+{% if keywords %}
+<meta name="keywords" content="{{ keywords }}" />
+{% endif %}
+{% if oct_ultrastore_data.preload is defined and oct_ultrastore_data.preload %}
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fonts/OpenSansLight.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fonts/OpenSansBold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fonts/OpenSansRegular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fonts/OpenSansSemibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fontawesome-free-5.6.1-web/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fontawesome-free-5.6.1-web/webfonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="catalog/view/theme/oct_ultrastore/stylesheet/fontawesome-free-5.6.1-web/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+{% endif %}
+{% for style in styles %}
+<link href="{{ style.href }}" rel="{{ style.rel }}" media="{{ style.media }}" />
+{% endfor %}
+{% for script in scripts %}
+<script src="{{ script }}"></script>
+{% endfor %}
+{% for link in links %}
+<link href="{{ link.href }}" rel="{{ link.rel }}" />
+{% endfor %}
+{% for analytic in analytics %}
+{{ analytic }}
+{% endfor %}
+</head>
+<body class="{{ sidebar_position }}">
+<div id="us_menu_mobile_box" class="d-lg-none">
+	<div id="us_menu_mobile_title" class="modal-header">
+		<span class="modal-title">{{ oct_menu }}</span>
+		<button id="us_menu_mobile_close" type="button" class="us-close">
+			<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+			<span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+		</button>
+	</div>
+	<div id="us_menu_mobile_content"></div>
+</div>
+<nav id="top">
+  <div class="container d-flex h-100">
+		<div id="us_menu_mobile_button" class="us-menu-mobile d-lg-none h-100">
+			<img src="catalog/view/theme/oct_ultrastore/img/burger.svg" class="us-navbar-toggler" alt="" />
+		</div>
+		<div id="dropdown_menu_info" class="us-top-mobile-item us-top-mobile-item-info d-lg-none dropdown h-100">
+			<img src="catalog/view/theme/oct_ultrastore/img/mobile-info.svg" class="us-navbar-info" alt="" />
+			<div id="us_info_mobile" class="nav-dropdown-menu">
+				<div class="modal-header">
+			        <div class="modal-title">{{ oct_information }}</div>
+			        <button id="us_info_mobile_close" type="button" class="us-close">
+						<span aria-hidden="true" class="us-modal-close-icon us-modal-close-left"></span>
+						<span aria-hidden="true" class="us-modal-close-icon us-modal-close-right"></span>
+			        </button>
+			    </div>
+				<div class="nav-dropdown-menu-content">
+					{% if mobile_informations is not empty %}
+					<ul class="list-unstyled mobile-information-box">
+						<li class="mobile-info-title"><strong>{{ oct_information }}</strong></li>
+						{% for information in mobile_informations %}
+						<li class="oct-menu-information-li"><a href="{{ information.href }}" class="oct-menu-a">{{ information.title }}</a></li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+					{% if oct_contact_opens is defined and oct_contact_opens is not empty %}
+					<ul class="list-unstyled mobile-shedule-box">
+						<li class="mobile-info-title"><strong>{{ oct_working_hours }}:</strong></li>
+					</ul>
+					{% endif %}
+					{% if oct_ultrastore_data.contact_address[oct_lang_id] is defined and oct_ultrastore_data.contact_address[oct_lang_id] %}
+					<ul class="list-unstyled">
+						<li class="mobile-info-title"><strong>{{ oct_our_address }}:</strong></li>
+						<li><a href="javascript:;" onclick="showSidebarMap();">{{ oct_ultrastore_data.contact_address[oct_lang_id] }}</a></li>
+					</ul>
+					<div class="us_mobile_menu_info-map not_in"></div>
+					<script>
+					function showSidebarMap() {
+
+						var octMap = $('.us_mobile_menu_info-map');
+
+						if (octMap.hasClass('not_in')) {
+							octMap.html('{{ contact_map }}');
+							octMap.removeClass('not_in');
+						}
+
+					}
+				    </script>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div id="top-left" class="mr-auto d-flex align-items-center">
+			{% if oct_ultrastore_data.contact_address[oct_lang_id] is defined and oct_ultrastore_data.contact_address[oct_lang_id] %}
+			<div class="dropdown h-100">
+				<a class="btn top-address btn-link dropdown-toggle d-flex align-items-center h-100" href="javascript:;" role="button" id="dropdownMenuAddress" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-map-marker-alt"></i> <span>{{ oct_our_address }}</span> <i class="fas fa-chevron-down"></i></a>
+				<ul class="dropdown-menu nav-dropdown-menu address-dropdown-menu" aria-labelledby="dropdownMenuAddress">
+				    <li class="dropdown-item us-dropdown-item">{{ oct_ultrastore_data.contact_address[oct_lang_id] }}</li>
+				    {% if contact_map is defined and contact_map %}
+				    <li class="us-mobile-map-box not_in" id="oct-contact-map"></li>
+				    <script>
+				    	$('#dropdownMenuAddress').on('mouseenter mouseleave', function() {
+					    	octShowMap('{{ contact_map }}');
+						});
+				    </script>
+				    {% endif %}
+				</ul>
+			</div>
+			{% endif %}
+			{% if oct_contact_opens is defined and oct_contact_opens is not empty %}
+			<div class="dropdown h-100">
+			  	<a class="btn btn-shedule btn-link dropdown-toggle d-flex align-items-center h-100" href="javascript:;" role="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="far fa-clock"></i> <span>{{ oct_working_hours }}</span> <i class="fas fa-chevron-down"></i></a>
+				<ul class="dropdown-menu nav-dropdown-menu shedule-dropdown-menu" aria-labelledby="dropdownMenu1">
+					{% for oct_contact_open in oct_contact_opens %}
+				    <li class="dropdown-item us-dropdown-item">{{ oct_contact_open }}</li>
+				    {% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+			{% if header_informations is defined and header_informations is not empty %}
+				<ul class="top-info-ul">
+				{% for header_link in header_informations %}
+					<li><a href="{{ header_link.href }}" class="btn-link btn-block h-100 hidden-xs">{{ header_link.title }}</a></li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+		<div id="top-links" class="nav ml-auto d-flex">
+			{{ language }}
+			{{ currency }}
+			<div class="dropdown" id="us-account-dropdown">
+				{% if logged %}
+				<a href="{{ account }}" title="{{ text_account }}" class="btn btn-user btn-link dropdown-toggle btn-block h-100 d-flex align-items-center" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="catalog/view/theme/oct_ultrastore/img/user-mobile.svg" class="us-navbar-account" alt="" /><i class="far fa-user"></i> <span class="hidden-xs">{{ text_account }}</span> <i class="fas fa-chevron-down" ></i></a>
+				<ul class="dropdown-menu nav-dropdown-menu user-dropdown-menu dropdown-menu-right">
+		            <li class="dropdown-item us-dropdown-item"><a href="{{ account }}">{{ text_account }}</a></li>
+		            <li class="dropdown-item us-dropdown-item"><a href="{{ order }}">{{ text_order }}</a></li>
+		            <li class="dropdown-item us-dropdown-item"><a href="{{ transaction }}">{{ text_transaction }}</a></li>
+		            <li class="dropdown-item us-dropdown-item"><a href="{{ download }}">{{ text_download }}</a></li>
+		            <li class="dropdown-item us-dropdown-item"><a href="{{ logout }}">{{ text_logout }}</a></li>
+				</ul>
+				{% else %}
+				<a href="javascript:;" onclick="octPopupLogin();" title="{{ text_account }}" class="btn btn-user btn-link btn-block h-100" role="button" aria-haspopup="true"><img src="catalog/view/theme/oct_ultrastore/img/user-mobile.svg" class="us-navbar-account" alt="" /><i class="far fa-user"></i> <span class="hidden-xs">{{ text_account }}</span></a>
+				{% endif %}
+	        </div>
+		</div>
+		{{ cart_mobile }}
+	</div>
+</nav>
+<header>
+  <div class="container">
+    <div class="row align-items-center">
+    	<div id="logo" class="col-6 col-lg-3 col-md-3 us-logo-box text-center">
+			{% if logo %}
+				{% if oct_home is defined and oct_home %}
+					<img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="us-logo-img" />
+				{% else %}
+					<a href="{{ home }}">
+						<img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="us-logo-img" />
+					</a>
+				{% endif %}
+			{% else %}
+				<h1><a href="{{ home }}">{{ name }}</a></h1>
+			{% endif %}
+		</div>
+		<div class="col-12 col-lg-5 col-md-6 us-search-box">{{ search }}</div>
+		{% if oct_contact_telephones is defined and oct_contact_telephones is not empty %}
+		<div class="col-6 col-lg-2 col-md-3 us-phone-box d-flex align-items-center">
+			<div class="us-phone-img">
+				<img src="catalog/view/theme/oct_ultrastore/img/pnone-icon.svg" alt="phone-icon">
+			</div>
+			<div class="us-phone-content">
+				{% if oct_contact_telephones|length > 1 %}
+				<a class="btn top-phone-btn dropdown-toggle" href="tel:{{ oct_contact_telephones[0]|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" role="button" id="us-phones-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>{{ oct_contact_telephones[0] }}</span> <i class="fas fa-chevron-down"></i></a>
+				<ul class="dropdown-menu header-dropdown-menu" aria-labelledby="us-phones-dropdown">
+					{% for oct_contact_telephone in oct_contact_telephones %}
+					<li><a href="tel:{{ oct_contact_telephone|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" class="phoneclick"><i class="fas fa-phone-volume"></i> {{ oct_contact_telephone }}</a></li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<a class="btn top-phone-btn" href="tel:{{ oct_contact_telephones[0]|replace({" " : "", "-" : "", "(" : "", ")" : ""}) }}" role="button" id="us-phones-dropdown"><span>{{ oct_contact_telephones[0] }}</span></a>
+				{% endif %}
+			</div>
+		</div>
+		{% endif %}
+		{{ cart }}
+    </div>
+  </div>
+</header>
+<div class="menu-row sticky-top">
+	<div class="container">
+		<div class="row">
+			{{ menu }}
+		</div>
+	</div>
+</div>
