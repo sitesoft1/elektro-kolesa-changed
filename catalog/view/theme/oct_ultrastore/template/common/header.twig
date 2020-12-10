@@ -133,6 +133,9 @@
 				{% for header_link in header_informations %}
 					<li><a href="{{ header_link.href }}" class="btn-link btn-block h-100 hidden-xs">{{ header_link.title }}</a></li>
 				{% endfor %}
+				<!-- show geo-ip module -->
+					<li><div class="prmn-cmngr">{{ prmn_cmngr }}</div></li>
+				<!-- show geo-ip module END -->
 				</ul>
 			{% endif %}
 		</div>
