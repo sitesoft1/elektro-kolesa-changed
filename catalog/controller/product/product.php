@@ -172,13 +172,11 @@ class ControllerProductProduct extends Controller {
                     $icnt++;
                     if ($icnt != $icount) {
                         $data['all_product_categories'][] = array(
-                            'name' => $single_product_category['name'] . ',',
-                            'href' => $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id'])
+                            'link' => '<a class="product_category_a" href="' . $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id']) . '">' . $single_product_category['name'] . '</a>,'
                         );
                     }else{
                         $data['all_product_categories'][] = array(
-                            'name' => $single_product_category['name'],
-                            'href' => $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id'])
+                            'link' => '<a class="product_category_a" href="' . $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id']) . '">' . $single_product_category['name'] . '</a>.'
                         );
                     }
                     

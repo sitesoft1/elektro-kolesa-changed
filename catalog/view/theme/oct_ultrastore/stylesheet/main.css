@@ -7215,7 +7215,11 @@ span.simple-step-delimiter:before {
 	}
 
 	.product_category{
-		margin-left: 10px;
+		font-size: 13px;
+		color: #BABABA;
+		text-align: justify;
+		margin-right: 24px;
+		margin-left: -16px;
 	}
 
 	.product_category_div{
@@ -7231,8 +7235,9 @@ span.simple-step-delimiter:before {
 		display: inline;
 	}
 
-	.product_category_a{
-
+	.product_category_a:hover{
+		color: #71BE00;
+		text-decoration: underline;
 	}
 
 

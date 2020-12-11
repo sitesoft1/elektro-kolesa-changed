@@ -358,11 +358,11 @@
 
 						{% if all_product_categories %}
 						<div class="product_category">
-							<div class="product_category_div">Товар в категориях: </div>
 							<ul class="product_category_ul">
+								<div class="product_category_div">Товар в категориях: </div>
 								{% for product_category in all_product_categories %}
 									<li class="product_category_li">
-										<a class="product_category_a" href="{{ product_category.href }}">{{ product_category.name }}</a>
+										{{ product_category.link }}
 									</li>
 								{% endfor %}
 							</ul>
