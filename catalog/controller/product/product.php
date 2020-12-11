@@ -43,7 +43,7 @@ class ControllerProductProduct extends Controller {
 
 			// Set the last category breadcrumb
 			$category_info = $this->model_catalog_category->getCategory($category_id);
-
+			
 			if ($category_info) {
 				$url = '';
 
@@ -162,6 +162,30 @@ class ControllerProductProduct extends Controller {
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
+		    
+		    //Здесь получим все категории к которым относится данный товар
+            $all_product_categories = $this->model_catalog_product->getAllProductCategories($product_id);
+		        //Сформируем массив ссылок
+                $icnt = 0;
+                $icount = count($all_product_categories);
+                foreach ($all_product_categories as $single_product_category){
+                    $icnt++;
+                    if ($icnt != $icount) {
+                        $data['all_product_categories'][] = array(
+                            'name' => $single_product_category['name'] . ',',
+                            'href' => $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id'])
+                        );
+                    }else{
+                        $data['all_product_categories'][] = array(
+                            'name' => $single_product_category['name'],
+                            'href' => $this->url->link('product/category', 'path=' . '_' . (int) $single_product_category['category_id'])
+                        );
+                    }
+                    
+                }
+		        //Сформируем массив ссылок КОНЕЦ
+            //Здесь получим все категории к которым относится данный товар КОНЕЦ
+		    
 			$url = '';
 
 			if (isset($this->request->get['path'])) {

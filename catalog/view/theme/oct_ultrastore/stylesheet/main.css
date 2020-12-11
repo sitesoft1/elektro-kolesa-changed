@@ -7214,6 +7214,29 @@ span.simple-step-delimiter:before {
 		margin-right: 8px;
 	}
 
+	.product_category{
+		margin-left: 10px;
+	}
+
+	.product_category_div{
+		float: left;
+		margin-right: 6px;
+	}
+
+	.product_category_ul{
+		list-style: none;
+	}
+
+	.product_category_li{
+		display: inline;
+	}
+
+	.product_category_a{
+
+	}
+
+
+
 
 
 

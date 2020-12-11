@@ -417,6 +417,13 @@ class ModelCatalogProduct extends Model {
 
 		return $query->rows;
 	}
+    
+    //Здесь получим все категории к которым относится данный товар
+    public function getAllProductCategories($product_id) {
+        $query = $this->db->query("SELECT ptc.category_id, cd.name FROM oc_product_to_category ptc LEFT OUTER JOIN oc_category_description cd ON ptc.category_id=cd.category_id WHERE cd.language_id='1' AND ptc.product_id='" . (int)$product_id . "'");
+        return $query->rows;
+    }
+    //Здесь получим все категории к которым относится данный товар КОНЕЦ
 
 	public function getTotalProducts($data = array()) {
 		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total";

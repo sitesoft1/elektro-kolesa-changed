@@ -104,6 +104,7 @@
 					</div>
 					{% endif %}
 					<div class="us-product-right">
+
 						<div class="us-product-rating-wishlist d-flex align-items-center justify-content-between">
 							{% if review_status %}
 							<div class="us-product-rating d-flex align-items-center">
@@ -354,6 +355,20 @@
 							</div>
 							{% endif %}
 						</div>
+
+						{% if all_product_categories %}
+						<div class="product_category">
+							<div class="product_category_div">Товар в категориях: </div>
+							<ul class="product_category_ul">
+								{% for product_category in all_product_categories %}
+									<li class="product_category_li">
+										<a class="product_category_a" href="{{ product_category.href }}">{{ product_category.name }}</a>
+									</li>
+								{% endfor %}
+							</ul>
+						</div>
+						{% endif %}
+
 					</div>
 				</div>
 				<ul class="us-product-description-nav list-unstyled d-flex align-items-center">
