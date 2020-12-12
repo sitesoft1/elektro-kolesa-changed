@@ -219,6 +219,7 @@ class SeoPro {
 					$category = explode('_', $data['path']);
 					$category = end($category);
 					$data['path'] = $this->getPathByCategory($category);
+                    //file_put_contents(DIR_LOGS . 'data_path_log.txt', var_export($data['path'], true));
 				}
 				break;
 
@@ -308,6 +309,7 @@ class SeoPro {
 				$url = '';
 				if($keyword  !== '') 
 					$url = '/' . rawurlencode($keyword);
+					//$url = '/category1/' . rawurlencode($keyword);
 			}
 			//if not exist keyword for route & empty any keyword return route-param for native seo_url class
 			$data['route']  = $route;
@@ -317,14 +319,32 @@ class SeoPro {
 			$rows = [];
 				
 			foreach ($queries as $query) {
+			    
+                file_put_contents(DIR_LOGS . 'query_log.txt', var_export($query, true));
+			    
 				$keyword = $this->getKeywordByQuery($query);
+				
+				//Добавим слово в урл в зависимости от сущьности
+				if(stristr($query, 'category_id') and !empty($keyword)){
+                    $keyword = 'category/'.$keyword;
+                }elseif(stristr($query, 'product_id') and !empty($keyword)){
+                    $keyword = 'goods/'.$keyword;
+                }elseif(stristr($query, 'manufacturer_id') and !empty($keyword)){
+                    $keyword = 'manufacturer/'.$keyword;
+                }
+                //Добавим слово в урл в зависимости от сущьности КОНЕЦ!
+				
+                file_put_contents(DIR_LOGS . 'keyword_log.txt', var_export($keyword, true));
+    
+				
 				if ($keyword) 
 					$rows[] = $keyword;
 			}
 
 			if (!empty($rows) && (count($rows) == count($queries))) {
 				foreach($rows as $row) {
-					$url .= '/' . rawurlencode($row);
+					$url .= '/' . str_replace('%2F', '/', rawurlencode($row));
+					//$url .= '/' . rawurlencode($row);
 				}
 			}	
 		}
@@ -402,9 +422,13 @@ class SeoPro {
 			foreach ($categories as $category_id => $category) {
 				$path = $this->getPath($categories, $category_id);//пробуем поменять тут...
                 $this->cat_tree[$category_id]['path'] = $path;
+                //file_put_contents(DIR_LOGS . 'path_log.txt', var_export($path, true));
+                //file_put_contents(DIR_LOGS . 'cat_tree.txt', var_export($this->cat_tree, true));
                 
                 $path2 = $this->getPath2($categories, $category_id);//пробуем поменять тут...
 				$this->cat_tree2[$category_id]['path'] = $path2;
+                //file_put_contents(DIR_LOGS . 'path2_log.txt', var_export($path2, true));
+                //file_put_contents(DIR_LOGS . 'cat_tree2.txt', var_export($this->cat_tree2, true));
 				
 			};
 			
@@ -656,6 +680,8 @@ class SeoPro {
 		if (!empty($this->cat_tree[$category_id]['path']) && is_array($this->cat_tree[$category_id]['path'])) {
 			$path = implode('_', $this->cat_tree[$category_id]['path']);
 		}
+        
+        //file_put_contents(DIR_LOGS . 'getPathByCategory_log.txt', var_export($path, true));
 
 		return $path;
 		
