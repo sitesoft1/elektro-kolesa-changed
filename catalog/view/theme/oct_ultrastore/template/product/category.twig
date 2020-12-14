@@ -138,7 +138,7 @@
 									{% if product.price %}
 									<div class="us-module-price">
 										{% if not product.special %}
-										<span class="us-module-price-actual">{{ product.price }}</span>
+										<span class="us-module-price-actual">Цена: {{ product.price }}</span>
 										{% else %}
 										<span class="us-module-price-old">{{ product.price }}</span><span class="us-module-price-new">{{ product.special }}</span>
 										{% endif %}
