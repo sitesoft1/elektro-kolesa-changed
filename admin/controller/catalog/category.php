@@ -318,6 +318,17 @@ class ControllerCatalogCategory extends Controller {
 		} else {
 			$data['path'] = '';
 		}
+		
+		//замена слов в названии товара в зависимости от категории
+        //$data['replacement'] = '';
+        if (isset($this->request->post['replacement'])) {
+            $data['replacement'] = $this->request->post['replacement'];
+        } elseif (isset($this->request->get['category_id'])) {
+            $data['replacement'] = $this->model_catalog_category->getCategoryReplacement($this->request->get['category_id']);
+        } else {
+            $data['replacement'] = '';
+        }
+		//замена слов в названии товара в зависимости от категории КОНЕЦ
 
 		if (isset($this->request->post['parent_id'])) {
 			$data['parent_id'] = $this->request->post['parent_id'];

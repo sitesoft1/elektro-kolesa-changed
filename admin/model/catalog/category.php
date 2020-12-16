@@ -11,6 +11,12 @@ class ModelCatalogCategory extends Model {
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape($data['image']) . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
+        
+        //замена слов в названии товара в зависимости от категории
+        if (isset($data['replacement'])) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "'");
+        }
+        //замена слов в названии товара в зависимости от категории КОНЕЦ
 
 		foreach ($data['category_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "category_description SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_h1 = '" . $this->db->escape($value['meta_h1']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
@@ -85,6 +91,13 @@ class ModelCatalogCategory extends Model {
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "category SET image = '" . $this->db->escape($data['image']) . "' WHERE category_id = '" . (int)$category_id . "'");
 		}
+        
+        //замена слов в названии товара в зависимости от категории
+        if (isset($data['replacement'])) {
+            $this->db->query("DELETE FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "'");
+        }
+        //замена слов в названии товара в зависимости от категории КОНЕЦ
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");
 
@@ -239,7 +252,9 @@ class ModelCatalogCategory extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related_wb WHERE category_id = '" . (int)$category_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "article_related_wb WHERE category_id = '" . (int)$category_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "coupon_category WHERE category_id = '" . (int)$category_id . "'");
-
+        //замена слов в названии товара в зависимости от категории
+		$this->db->query("DELETE FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+        //замена слов в названии товара в зависимости от категории КОНЕЦ
 		$this->cache->delete('category');
 		
 		if($this->config->get('config_seo_pro')){		
@@ -359,6 +374,20 @@ class ModelCatalogCategory extends Model {
 
 		return $category_description_data;
 	}
+    
+    //замена слов в названии товара в зависимости от категории
+    public function getCategoryReplacement($category_id) {
+        
+        $query = $this->db->query("SELECT `replacement` FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+        
+        if($query->num_rows>0 and isset($query->row['replacement'])){
+            return $query->row['replacement'];
+        }else{
+            return '';
+        }
+        
+    }
+    //замена слов в названии товара в зависимости от категории КЕНЕЦ
 	
 	public function getCategoryPath($category_id) {
 		$query = $this->db->query("SELECT category_id, path_id, level FROM " . DB_PREFIX . "category_path WHERE category_id = '" . (int)$category_id . "'");
