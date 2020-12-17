@@ -3,6 +3,18 @@
 // *	@license	GNU General Public License version 3; see LICENSE.txt
 
 class ControllerProductCategory extends Controller {
+    
+    public function mb_str_ireplace($needle, $replacement, $haystack){
+        return preg_replace("~$needle~iu", $replacement, $haystack);
+    }
+    
+    public function mb_str_replace($search, $replace, $string)
+    {
+        $charset = mb_detect_encoding($string);
+        $unicodeString = iconv($charset, "UTF-8", $string);
+        return str_replace($search, $replace, $unicodeString);
+    }
+    
 	public function index() {
 		$this->load->language('product/category');
 
@@ -186,6 +198,13 @@ class ControllerProductCategory extends Controller {
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
+			
+            //замена слов в названии товара в зависимости от категории
+            $replacement = $this->model_catalog_category->getCategoryReplacement($category_id);
+            if(isset($replacement) and !empty($replacement)){
+                $replacement_arr = explode(PHP_EOL, $replacement);
+            }
+            //замена слов в названии товара в зависимости от категории КОНЕЦ
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -217,7 +236,20 @@ class ControllerProductCategory extends Controller {
 				} else {
 					$rating = false;
 				}
-
+                
+                //замена слов в названии товара в зависимости от категории
+                if(isset($replacement_arr) and !empty($replacement_arr)){
+                    foreach ($replacement_arr as $replacement_str){
+                        if(!empty($replacement_str)){
+                            $replacement_str_arr = explode('|', $replacement_str);
+                            if( !empty($replacement_str_arr) and (count($replacement_str_arr)>1) and !empty($replacement_str_arr[0]) ){
+                                $result['name'] = $this->mb_str_ireplace($replacement_str_arr[0], $replacement_str_arr[1], $result['name']);
+                            }
+                        }
+                    }
+                }
+                //замена слов в названии товара в зависимости от категории КОНЕЦ
+                
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,

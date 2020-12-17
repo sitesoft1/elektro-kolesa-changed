@@ -11,6 +11,18 @@ class ModelCatalogCategory extends Model {
 
 		return $query->rows;
 	}
+    
+    public function getCategoryReplacement($category_id) {
+	    
+        $query = $this->db->query("SELECT `replacement` FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+    
+        if($query->num_rows>0 and isset($query->row['replacement'])){
+            return $query->row['replacement'];
+        }else{
+            return '';
+        }
+        
+    }
 
 	public function getCategoryFilters($category_id) {
 		$implode = array();
