@@ -81,7 +81,8 @@ class ModelCatalogCategory extends Model {
     
     public function getCategoryPath($category_id) {
      
-	    $query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE category_id = '" . (int)$category_id . "' AND `path_id` <> '".(int)$category_id."' ORDER BY `level` ASC");
+	    //$query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE category_id = '" . (int)$category_id . "' AND `path_id` <> '".(int)$category_id."' ORDER BY `level` ASC");
+	    $query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` = '" . (int)$category_id . "' AND `path_id` <> '".(int)$category_id."' AND `path_id` IN(SELECT `category_id` FROM `" . DB_PREFIX . "category_to_store` WHERE `store_id` ='".$this->config->get('config_store_id')."') ORDER BY `level` ASC");
 	    
 	    $data = array();
 	    
@@ -98,7 +99,7 @@ class ModelCatalogCategory extends Model {
     
     public function getCategoryPathAll($category_id) {
         
-        $query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE category_id = '" . (int)$category_id . "' ORDER BY `level` ASC");
+        $query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE category_id = '" . (int)$category_id . "' AND `path_id` IN(SELECT `category_id` FROM `" . DB_PREFIX . "category_to_store` WHERE `store_id` ='".$this->config->get('config_store_id')."') ORDER BY `level` ASC");
         
         $data = array();
         
@@ -116,7 +117,7 @@ class ModelCatalogCategory extends Model {
     //Сформируем хлебные крошки из категории максимального уровня вложенности
     public function getProductCategoryPath($product_id) {
         //$query = $this->db->query("SELECT `category_id` FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND `main_category`='1'");
-        $query = $this->db->query("SELECT `path_id` FROM `oc_category_path` WHERE category_id IN(SELECT category_id FROM oc_product_to_category WHERE product_id = '" . (int)$product_id . "') AND `level`=(SELECT MAX(`level`) FROM `oc_category_path` WHERE category_id IN(SELECT category_id FROM oc_product_to_category WHERE product_id = '" . (int)$product_id . "')) LIMIT 1");
+        $query = $this->db->query("SELECT `path_id` FROM `" . DB_PREFIX . "category_path` WHERE `category_id` IN(SELECT `category_id` FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = '" . (int)$product_id . "') AND `level`=(SELECT MAX(`level`) FROM `" . DB_PREFIX . "category_path` WHERE `category_id` IN(SELECT `category_id` FROM `" . DB_PREFIX . "product_to_category` WHERE `product_id` = '" . (int)$product_id . "')) LIMIT 1");
         if ($query->num_rows) {
             return $this->getCategoryPathAll($query->row['path_id']);
         }else{
