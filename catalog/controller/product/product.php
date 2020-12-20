@@ -21,8 +21,16 @@ class ControllerProductProduct extends Controller {
 			$path = '';
 
 			$parts = explode('_', (string)$this->request->get['path']);
-
+            
+            //Сформируем хлебные крошки из главной категории
+            $parts_arr = $this->model_catalog_category->getProductCategoryPath($this->request->get['product_id']);
+            if($parts_arr){
+                $parts = $parts_arr;
+            }
+            //Сформируем хлебные крошки из главной категории
+			
 			$category_id = (int)array_pop($parts);
+			
 
 			foreach ($parts as $path_id) {
 				if (!$path) {
@@ -45,6 +53,7 @@ class ControllerProductProduct extends Controller {
 			$category_info = $this->model_catalog_category->getCategory($category_id);
 			
 			if ($category_info) {
+			 
 				$url = '';
 
 				if (isset($this->request->get['sort'])) {
@@ -65,7 +74,8 @@ class ControllerProductProduct extends Controller {
 
 				$data['breadcrumbs'][] = array(
 					'text' => $category_info['name'],
-					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url)
+					//'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url)
+					'href' => $this->url->link('product/category', 'path=' . $category_id . $url)
 				);
 			}
 		}
