@@ -87,8 +87,17 @@ class ControllerProductCategory extends Controller {
 			$path = '';
 
 			$parts = explode('_', (string)$this->request->get['path']);
-
+			
 			$category_id = (int)array_pop($parts);
+            
+            //Получим всех родителей категории
+            if(empty($parts)){
+                $parts_arr = $this->model_catalog_category->getCategoryPath($category_id);
+                if($parts_arr){
+                    $parts = array_merge($parts, $parts_arr);
+                }
+            }
+            //Получим всех родителей категории КОНЕЦ
 
 			foreach ($parts as $path_id) {
 				if (!$path) {
