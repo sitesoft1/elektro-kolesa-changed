@@ -25,6 +25,7 @@
 							{% if thumb %}
 							<div class="us-category-description-img"><img src="{{ thumb }}" alt="{{ heading_title }}" title="{{ heading_title }}" /></div>
 							{% endif %}
+
 							{% if description %}
 							<div id="us-category-description"{% if categories or products %} class="us-category-description-cont"{% endif %}>
 								{% if description|length > 500  and (categories or products) %}
@@ -33,6 +34,7 @@
 								<div class="us-category-description-text">{{ description }}</div>
 							</div>
 							{% endif %}
+
 						</div>
 						{% if description and description|length > 500  and (categories or products) %}
 						<div class="us-show-more{% if thumb %} with-thumb{% endif %}">

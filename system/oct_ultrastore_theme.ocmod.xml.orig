@@ -1665,53 +1665,25 @@
 	</file>
 	<file path="catalog/view/theme/oct_ultrastore/template/product/category.twig">
     	<operation error="skip">
-			<!--<search><![CDATA[<div class="us-category-description-text">{{ description }}</div>]]></search>-->
-			<search><![CDATA[<div id="content" class="{{ class }}">]]></search>
+			<search><![CDATA[<div class="us-category-description-text">{{ description }}</div>]]></search>
 			<add position="after"><![CDATA[
 			{% if categories_page is defined and categories_page is not empty %}
-				<div class="us-categories_page-cont">
-					{% if categories_page|length > 4 %}
-					<style>
-						.us-categories_page-cont {
-							max-height: 140px !important;
-						}
-					</style>
-						<div class="us-category-categories_page-opacity"></div>
-					{% endif %}
-					<div class="us-category-categories_page-text">
-						<ul class="category-landing-links list-unstyled">
-						{% for oct_page in categories_page %}
-							{% if oct_page.page_links is not empty %}
-								<li class="category-landing-links-item">
-									<span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span>
-									{% for link in oct_page.page_links %}
-										<a href="{{ link[language_id].link }}" class="category-landing-links-item-link d-flex-inline align-items-center" title="{{ link[language_id].title }}"><span>{{ link[language_id].title }}</span></a>
-									{% endfor %}
-								</li>
-							{% endif %}
+			<div class="us-category-categories_page-text">
+				<ul class="category-landing-links list-unstyled">
+				{% for oct_page in categories_page %}
+					{% if oct_page.page_links is not empty %}
+					<li class="category-landing-links-item">
+						<span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span>
+						{% for link in oct_page.page_links %}
+						<a href="{{ link[language_id].link }}" class="category-landing-links-item-link d-flex-inline align-items-center" title="{{ link[language_id].title }}"><span>{{ link[language_id].title }}</span></a>
 						{% endfor %}
-						</ul>
-					</div>
-				</div>
-				{% if categories_page|length > 4 %}
-					<div class="us-show-more">
-						<a href="javascript:void(0);" class="us-show-more-link" id="us-show-more-categories_page-link">
-							<span class="us-show-more-expand">{{ oct_expand }}</span>
-							<span class="us-show-more-rollup">{{ oct_collapse }}</span>
-							<i class="fas fa-angle-down"></i>
-						</a>
-					</div>
-							<script>
-								$(function () {
-									$('#us-show-more-categories_page-link').on('click', function () {
-										$(this).toggleClass('clicked');
-										$('.us-categories_page-cont').toggleClass('expanded');
-										$('.us-category-categories_page-opacity').toggleClass('hidden');
-									});
-								});
-							</script>
-				{% endif %}
-			{% endif %}]]></add>
+					</li>
+					{% endif %}
+				{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+			]]></add>
     	</operation>
 	</file>
 	<file path="catalog/controller/product/search.php">
