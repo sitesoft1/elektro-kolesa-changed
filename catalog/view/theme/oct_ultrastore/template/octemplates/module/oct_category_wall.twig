@@ -1,0 +1,54 @@
+{% if categories is not empty %}
+<div class="row row-padding-top">
+	<div class="col-lg-12">
+		<div class="us-main-shop-title us-categories-wall-header">{{ heading_title }}</div>
+	</div>
+</div>
+<div id="us-pfc-0" class="row us-categories-wall-row">
+	{% set count_cats = 1 %}
+  {% for category in categories %}
+  	<div class="col-md-6 col-lg-4 col-xl-3 category-wall-item">
+  		<div class="us-categories-wall-item">
+  			<a href="{{ category.href }}" class="us-categories-wall-top-link">
+  				{% if (category.thumb) %}
+					<img src="{{ category.thumb }}"{% if oct_lazyload %} data-srcset="{{ category.thumb }} 100w" srcset="{{ oct_lazy_image }} 100w" sizes="100vw"{% endif %} class="us-categories-wall-img{% if oct_lazyload %} oct-lazy{% endif %}" alt="{{ category.name }}" title="{{ category.name }}" />
+				{% endif %}
+				<div class="us-categories-wall-title">{{ category.name }}</div>
+			</a>
+		    {% if category.children %}
+  				<hr>
+	    			<ul id="us-category-children-{{ category.category_id }}" class="us-categories-wall-list list-unstyled">
+					{% set countstop = 1 %}
+					{% for child in category.children %}
+						{% set countstop = countstop + 1 %}
+				        <li style="display: none;" class="us-categories-wall-child-{{ category.category_id }}"><a href="{{ child.href }}" class="us-categories-wall-link">{{ child.name }}</a></li>
+					{% endfor %}
+						{% if (countstop>3) %}
+							<li class="oct-category-see-more"><a id="us-category-button-{{ category.category_id }}" class="us-categories-wall-btn"><i class="fas fa-long-arrow-alt-right"></i> <span class="show-all">Показать все</span> </a></li>
+						{% endif %}
+						<script>
+							octShowCategories("us-category-button-{{ category.category_id }}", "us-category-children-{{ category.category_id }}", 'us-categories-wall-child-{{ category.category_id }}', 4, '{{ limit }}');
+						</script>
+			    </ul>
+		    {% endif %}
+		</div>
+	</div>
+	  {% set count_cats = count_cats + 1 %}
+  {% endfor %}
+</div>
+
+	<!-- Button show more. -->
+	<div class="row show-more-button-block">
+		<div class="col-lg-12">
+			<div class="us-module-button">
+				<button id="us-pfc-button-0" class="us-module-btn"><i class="fas fa-long-arrow-alt-right"></i> <span class="show-all">Показать еще</span></button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		octShowCategories("us-pfc-button-0", "us-pfc-0", 'category-wall-item', 4, 8);
+	</script>
+	<!-- Button show more END -->
+
+{% endif %}
