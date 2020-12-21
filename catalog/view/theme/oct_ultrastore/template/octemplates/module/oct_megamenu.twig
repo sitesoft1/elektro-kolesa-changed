@@ -2,7 +2,7 @@
 	{% if (standart_menu is defined and standart_menu) or (oct_megamenu_mobile_categories is defined and oct_megamenu_mobile_categories) or (oct_megamenu_brands is defined and oct_megamenu_brands) or (oct_megamenu_informations is defined and oct_megamenu_informations) or (oct_megamenu_links is defined and oct_megamenu_links) %}
 		<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
 		{% if standart_menu is defined and standart_menu is not empty %}
-			MOBILE!!! {{ standart_menu }}
+			{{ standart_menu }}
 		{% endif %}
 		{% if items is defined and items is not empty %}
 			{% for item in items %}
@@ -102,7 +102,7 @@
 	</div>
 	<nav id="oct-menu-dropdown-menu">
 		<ul id="oct-menu-ul" class="oct-menu-ul oct-menu-parent-ul list-unstyled">
-			DESKTOP!!! {{ standart_menu }}
+			{{ standart_menu }}
 			</ul>
 		</nav>
 	</div>

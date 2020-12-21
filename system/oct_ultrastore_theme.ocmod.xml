@@ -1592,7 +1592,16 @@
 			}
 
 			$data['language_id'] = (int)$this->config->get('config_language_id');
+
 			$data['categories_page'] = (isset($oct_ultrastore_data['category_page_group_links']) && ($oct_ultrastore_data['category_page_group_links'] == 'on' || $oct_ultrastore_data['category_page_group_links'])) ? unserialize($category_info['page_group_links']) : [];
+			if(isset($data['categories_page']) and !empty($data['categories_page'])){
+				$categories_page_links_count = 0;
+				foreach($data['categories_page'] as $k => $v){
+					$categories_page_links_count = $categories_page_links_count + count($v['page_links']);
+				}
+				$data['categories_page_links_count'] = $categories_page_links_count;
+			}
+
 			]]></add>
     	</operation>
     	<operation error="skip">
@@ -1670,7 +1679,7 @@
 			<add position="after"><![CDATA[
 			{% if categories_page is defined and categories_page is not empty %}
 				<div class="us-categories_page-cont">
-					{% if categories_page|length > 4 %}
+					{% if categories_page|length > 4 or categories_page_links_count > 50 %}
 					<style>
 						.us-categories_page-cont {
 							max-height: 140px !important;
@@ -1693,7 +1702,7 @@
 						</ul>
 					</div>
 				</div>
-				{% if categories_page|length > 4 %}
+				{% if categories_page|length > 4 or categories_page_links_count > 50 %}
 					<div class="us-show-more">
 						<a href="javascript:void(0);" class="us-show-more-link" id="us-show-more-categories_page-link">
 							<span class="us-show-more-expand">{{ oct_expand }}</span>
