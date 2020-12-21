@@ -414,6 +414,16 @@ class ControllerCatalogCategory extends Controller {
 		} else {
 			$data['top'] = 0;
 		}
+		
+		//Отметка что категория является тегом
+        if (isset($this->request->post['is_tag'])) {
+            $data['is_tag'] = $this->request->post['is_tag'];
+        } elseif (!empty($category_info)) {
+            $data['is_tag'] = $category_info['is_tag'];
+        } else {
+            $data['is_tag'] = 0;
+        }
+		//Отметка что категория является тегом КОНЕЦ
 
 		if (isset($this->request->post['column'])) {
 			$data['column'] = $this->request->post['column'];

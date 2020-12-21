@@ -129,12 +129,31 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Отметка что категория является тегом -->
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-is_tag"><span data-toggle="tooltip" title="Отметив данную галку вы превратите категорию в тег, она будет скрыта отовсюду кроме мест вывода категорий 'тегов'">Категоря является тегом</span></label>
+                <div class="col-sm-10">
+                  <div class="checkbox">
+                    <label>
+                      {% if is_tag %}
+                        <input type="checkbox" name="is_tag" value="1" checked="checked" id="input-is_tag" />
+                      {% else %}
+                        <input type="checkbox" name="is_tag" value="1" id="input-is_tag" />
+                      {% endif %}
+                      &nbsp; </label>
+                  </div>
+                </div>
+              </div>
+              <!-- Отметка что категория является тегом КОНЕЦ -->
+
               <div class="form-group">
                 <label class="col-sm-2 control-label">{{ entry_image }}</label>
                 <div class="col-sm-10"><a href="" id="thumb-image" data-toggle="image" class="img-thumbnail"><img src="{{ thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
                   <input type="hidden" name="image" value="{{ image }}" id="input-image" />
                 </div>
               </div>
+
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-top"><span data-toggle="tooltip" title="{{ help_top }}">{{ entry_top }}</span></label>
                 <div class="col-sm-10">
@@ -149,6 +168,7 @@
                   </div>
                 </div>
               </div>
+
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-column"><span data-toggle="tooltip" title="{{ help_column }}">{{ entry_column }}</span></label>
                 <div class="col-sm-10">
