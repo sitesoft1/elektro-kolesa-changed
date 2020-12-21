@@ -21,7 +21,9 @@
 					{% set countstop = 1 %}
 					{% for child in category.children %}
 						{% set countstop = countstop + 1 %}
-				        <li style="display: none;" class="us-categories-wall-child-{{ category.category_id }}"><a href="{{ child.href }}" class="us-categories-wall-link">{{ child.name }}</a></li>
+						{% if (child.is_tag==0) %}
+				        	<li style="display: none;" class="us-categories-wall-child-{{ category.category_id }}"><a href="{{ child.href }}" class="us-categories-wall-link">{{ child.name }}</a></li>
+						{% endif %}
 					{% endfor %}
 						{% if (countstop>3) %}
 							<li class="oct-category-see-more"><a id="us-category-button-{{ category.category_id }}" class="us-categories-wall-btn"><i class="fas fa-long-arrow-alt-right"></i> <span class="show-all">Показать все</span> </a></li>
