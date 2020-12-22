@@ -120,6 +120,25 @@ class ControllerProductCategory extends Controller {
 		}
 
 		$category_info = $this->model_catalog_category->getCategory($category_id);
+        
+        //Сформируем категории "теги"
+        $tags_results = $this->model_catalog_category->getTagCategories($category_id);
+        
+        if($tags_results){
+            $data['tags_categories'] = [];
+            foreach ($tags_results as $tags_result) {
+                $tags_filter_data = array(
+                    'filter_category_id'  => $tags_result['category_id'],
+                    'filter_sub_category' => true
+                );
+                
+                $data['tags_categories'][] = array(
+                    'name' => $tags_result['name'],
+                    'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '_' . $tags_result['category_id'] . $url)
+                );
+            }
+        }
+        //Сформируем категории "теги" КОНЕЦ
 
 		if ($category_info) {
 			
@@ -192,7 +211,7 @@ class ControllerProductCategory extends Controller {
 					'href' => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '_' . $result['category_id'] . $url)
 				);
 			}
-
+			
 			$data['products'] = array();
 
 			$filter_data = array(
@@ -412,8 +431,13 @@ class ControllerProductCategory extends Controller {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. ($page + 1)), 'next');
 			}
             
-            $this->document->addStyle('catalog/view/theme/oct_ultrastore/js/slick/slick.min.css');
-            $this->document->addScript('catalog/view/theme/oct_ultrastore/js/slick/slick.min.js');
+            $this->document->addStyle('catalog/view/theme/oct_ultrastore/slick/slick.css');
+            $this->document->addStyle('catalog/view/theme/oct_ultrastore/slick/slick-theme.css');
+            $this->document->addScript('catalog/view/theme/oct_ultrastore/slick/slick.js');
+			
+			//default
+			//$this->document->addStyle('catalog/view/theme/oct_ultrastore/js/slick/slick.min.css');
+            //$this->document->addScript('catalog/view/theme/oct_ultrastore/js/slick/slick.min.js');
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;

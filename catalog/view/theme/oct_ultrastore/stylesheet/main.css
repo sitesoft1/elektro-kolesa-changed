@@ -7252,6 +7252,60 @@ span.simple-step-delimiter:before {
 		text-decoration: underline;
 	}
 
+	/** Стили слайдера в категории **/
+
+	.slider {
+		width: 90%;
+		margin: 16px auto;
+	}
+
+	.slick-slide {
+		margin: 0px 10px;
+		font-size: 12px;
+		height: 60px;
+	}
+
+	.slick-slide img {
+		width: 100%;
+	}
+
+	.slick-prev:before, .slick-next:before {
+		display: inline-block !important;
+		font-weight: 400 !important;
+		font-style: normal !important;
+		line-height: 1 !important;
+		-webkit-font-smoothing: antialiased !important;
+		-moz-osx-font-smoothing: grayscale !important;
+		color: #50A8FF !important;
+		font-size: 22px !important;
+	}
+
+	/*
+	.slick-prev {
+		top: 25% !important;
+	}
+
+	.slick-next {
+		top: 25% !important;
+	}
+	 */
+
+
+	.slick-slide {
+		transition: all ease-in-out .3s;
+		opacity: .2;
+	}
+
+	.slick-active {
+		opacity: .5;
+	}
+
+	.slick-current {
+		opacity: 1;
+	}
+
+	/** Стили слайдера в категории КОНЕЦ **/
+
 
 
 
