@@ -7350,6 +7350,10 @@ span.simple-step-delimiter:before {
 		opacity: 1;
 	}
 
+	.oct-category-see-more{
+		margin-left: 24px;
+	}
+
 	/** Стили слайдера в категории КОНЕЦ **/
 
 

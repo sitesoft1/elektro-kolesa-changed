@@ -18,29 +18,28 @@
 			{% set class = 'col-md-12 no-col' %}
 			{% endif %}
 			<div id="content" class="{{ class }}">
-
 				{% if tags_categories %}
-					<ul class="tag-slider slider">
-						{% for tag_category in tags_categories %}
-							<li>
-								<a href="{{ tag_category.href }}">{{ tag_category.name }}</a>
-							</li>
-						{% endfor %}
-					</ul>
-					<script>
-						$(function () {
-							$(".tag-slider").slick({
-								dots: false,
-								infinite: true,
-								centerMode: true,
-								slidesToShow: 5,
-								slidesToScroll: 3,
-								variableWidth: true,
-								prevArrow: '<i class="fa fa-angle-left prev-arrow" aria-hidden="true"></i>',
-								nextArrow: '<i class="fa fa-angle-right next-arrow" aria-hidden="true"></i>'
+						<ul class="tag-slider slider">
+							{% for tag_category in tags_categories %}
+								<li>
+									<a href="{{ tag_category.href }}">{{ tag_category.name }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+						<script>
+							$(function () {
+								$(".tag-slider").slick({
+									dots: false,
+									infinite: true,
+									centerMode: true,
+									slidesToShow: 5,
+									slidesToScroll: 3,
+									variableWidth: true,
+									prevArrow: '<i class="fa fa-angle-left prev-arrow" aria-hidden="true"></i>',
+									nextArrow: '<i class="fa fa-angle-right next-arrow" aria-hidden="true"></i>'
+								});
 							});
-						});
-					</script>
+						</script>
 				{% endif %}
 
 				{% if oct_ultrastore_data.category_desc_position is defined and oct_ultrastore_data.category_desc_position == 'top' %}

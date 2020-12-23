@@ -358,7 +358,7 @@
 
 						{% if all_product_categories %}
 						<div class="product_category">
-							<ul class="product_category_ul">
+							<ul id="us-pfc-0" class="product_category_ul">
 								<div class="product_category_div">Товар в категориях: </div>
 								{% for product_category in all_product_categories %}
 									<li class="product_category_li">
@@ -367,6 +367,17 @@
 								{% endfor %}
 							</ul>
 						</div>
+							<!-- Button show more -->
+							<div style="margin-top: -10px;" class="oct-category-see-more">
+								<a id="us-pfc-button-0" class="us-categories-wall-btn">
+									<i class="fas fa-long-arrow-alt-right"></i> <span class="show-all">Показать все</span>
+								</a>
+							</div>
+
+							<script>
+								octShowCategoriesProductPage("#us-pfc-button-0", "#us-pfc-0", '.product_category_li', 16);
+							</script>
+							<!-- Button show more END -->
 						{% endif %}
 
 					</div>
