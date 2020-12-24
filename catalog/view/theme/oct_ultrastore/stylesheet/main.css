@@ -4617,6 +4617,13 @@ button[data-target="#ocfilter-hidden-options"] {
     margin-left: 8px;
 }
 
+
+    .category-landing-links-not-item-link:not(:last-child):after{
+        content: "/";
+        margin-left: 8px;
+        margin-right: 4px;
+    }
+
 .product-list .us-module-item {
 	text-align: unset;
 	padding-top: 15px;

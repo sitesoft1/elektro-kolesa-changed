@@ -1593,7 +1593,8 @@
 
 			$data['language_id'] = (int)$this->config->get('config_language_id');
 
-			$data['categories_page'] = (isset($oct_ultrastore_data['category_page_group_links']) && ($oct_ultrastore_data['category_page_group_links'] == 'on' || $oct_ultrastore_data['category_page_group_links'])) ? unserialize($category_info['page_group_links']) : [];
+			//$data['categories_page'] = (isset($oct_ultrastore_data['category_page_group_links']) && ($oct_ultrastore_data['category_page_group_links'] == 'on' || $oct_ultrastore_data['category_page_group_links'])) ? unserialize($category_info['page_group_links']) : [];
+			$data['categories_page'] = (isset($oct_ultrastore_data['category_page_group_links']) && ($oct_ultrastore_data['category_page_group_links'] == 'on' || $oct_ultrastore_data['category_page_group_links'])) ? $page_group_links : [];
 			if(isset($data['categories_page']) and !empty($data['categories_page'])){
 				$categories_page_links_count = 0;
 				foreach($data['categories_page'] as $k => $v){
@@ -1691,12 +1692,18 @@
 						<ul class="category-landing-links list-unstyled">
 						{% for oct_page in categories_page %}
 							{% if oct_page.page_links is not empty %}
-								<li class="category-landing-links-item">
-									<span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span>
-									{% for link in oct_page.page_links %}
-										<a href="{{ link[language_id].link }}" class="category-landing-links-item-link d-flex-inline align-items-center" title="{{ link[language_id].title }}"><span>{{ link[language_id].title }}</span></a>
-									{% endfor %}
-								</li>
+                                        <li class="category-landing-links-item">
+                                            <span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span>
+                                            {% for link in oct_page.page_links %}
+                                                {% if link[language_id].link is not empty %}
+                                                    <a href="{{ link[language_id].link }}" class="category-landing-links-item-link d-flex-inline align-items-center" title="{{ link[language_id].title }}"><span>{{ link[language_id].title }}</span></a>
+                                                {% elseif oct_page.page_links | length == 1 %}
+                                               		 <span><strong>{{ link[language_id].title }}</strong></span>
+                                                {% else %}
+                                                	 <span class="category-landing-links-not-item-link"><strong>{{ link[language_id].title }}</strong></span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </li>
 							{% endif %}
 						{% endfor %}
 						</ul>

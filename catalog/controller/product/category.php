@@ -4,6 +4,28 @@
 
 class ControllerProductCategory extends Controller {
     
+    public function recursiveRemoval(&$array, $val)
+    {
+        if(is_array($array))
+        {
+            foreach($array as $key=>&$arrayElement)
+            {
+                if(is_array($arrayElement))
+                {
+                    $this->recursiveRemoval($arrayElement, $val);
+                }
+                else
+                {
+                    if($arrayElement == $val)
+                    {
+                        //unset($array['title']);
+                        unset($array[$key]);
+                    }
+                }
+            }
+        }
+    }
+    
     public function mb_str_ireplace($needle, $replacement, $haystack){
         return preg_replace("~$needle~iu", $replacement, $haystack);
     }
@@ -85,12 +107,10 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$path = '';
-
 			$parts = explode('_', (string)$this->request->get['path']);
-			
 			$category_id = (int)array_pop($parts);
-            
-            //Получим всех родителей категории
+			
+			//Получим всех родителей категории
             if(empty($parts)){
                 $parts_arr = $this->model_catalog_category->getCategoryPath($category_id);
                 if($parts_arr){
@@ -98,7 +118,13 @@ class ControllerProductCategory extends Controller {
                 }
             }
             //Получим всех родителей категории КОНЕЦ
-
+            
+            if(!empty($parts)){
+                $parent_category_id = (int)$parts[0];
+            }else{
+                $parent_category_id = $category_id;
+            }
+            
 			foreach ($parts as $path_id) {
 				if (!$path) {
 					$path = (int)$path_id;
@@ -120,9 +146,21 @@ class ControllerProductCategory extends Controller {
 		}
 
 		$category_info = $this->model_catalog_category->getCategory($category_id);
+		
+		if(!empty($category_info['is_tag'])){
+            $tag_parts = $this->model_catalog_category->getCategoryPath($category_id);
+            if($tag_parts){
+                $parent_category_id = $tag_parts[0];
+            }
+        }
+		
+		$page_group_links = $this->model_catalog_category->getCategoryPageGroupLinks($parent_category_id);
+        $page_group_links = unserialize($page_group_links);
+        $this->recursiveRemoval($page_group_links, $this->url->link('product/category', 'path=' . $category_id ));
         
-        //Сформируем категории "теги"
-        $tags_results = $this->model_catalog_category->getTagCategories($category_id);
+		//Сформируем категории "теги"
+        //$tags_results = $this->model_catalog_category->getTagCategories($category_id);
+        $tags_results = $this->model_catalog_category->getTagCategories($parent_category_id);
         
         if($tags_results){
             $data['tags_categories'] = [];
