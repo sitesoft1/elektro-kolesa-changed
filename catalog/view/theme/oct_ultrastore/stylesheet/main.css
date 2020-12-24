@@ -7363,6 +7363,28 @@ span.simple-step-delimiter:before {
 		margin-left: 24px;
 	}
 
+	.tag_category{
+		list-style: none;
+	}
+
+	.tag_category li{
+		display: inline-block;
+		margin: 0px 10px;
+	}
+
+	.tag_category > li > a{
+		color: #50A8FF !important;
+		text-decoration: underline !important;
+		cursor: pointer;
+	}
+
+	#us-show-more-tags{
+		margin-top: -20px;
+		margin-bottom: 20px;
+		text-align: right;
+		font-size: 14px;
+	}
+
 	/** Стили слайдера в категории КОНЕЦ **/
 
 
