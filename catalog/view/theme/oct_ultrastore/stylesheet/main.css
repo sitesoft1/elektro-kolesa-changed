@@ -7346,11 +7346,13 @@ span.simple-step-delimiter:before {
 
 	.slick-slide {
 		transition: all ease-in-out .3s;
-		opacity: .2;
+        opacity: 1;
+		/* opacity: .2; */
 	}
 
 	.slick-active {
-		opacity: .5;
+		/* opacity: .5; */
+		opacity: 1;
 	}
 
 	.slick-current {

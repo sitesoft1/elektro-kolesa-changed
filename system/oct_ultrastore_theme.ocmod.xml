@@ -1686,7 +1686,6 @@
 							max-height: 140px !important;
 						}
 					</style>
-						<div class="us-category-categories_page-opacity"></div>
 					{% endif %}
 					<div class="us-category-categories_page-text">
 						<ul class="category-landing-links list-unstyled">
