@@ -335,7 +335,26 @@ function usInputMask(selector, mask) {
 }
 
 $(document).ready(function() {
-	
+
+	$('.panel-collapse').addClass('show');
+
+	/*
+	var filter_show = 2;
+	$('.rdrf-toggle54').on('click', function(){
+		if(filter_show%2 == 0){
+			$('.filter-vertical').css('left', '0px');
+			//$('section.filter-vertical').animate({left: "0px"}, 500);
+			//$('#rdrf54').animate({left: "0px"}, 500);
+		}else{
+			$('.filter-vertical').css('left', '-255px');
+			//$('section.filter-vertical').animate({left: "-255px"}, 500);
+			//$('#rdrf54').animate({left: "-255px"}, 500);
+		}
+		filter_show++;
+	});
+
+	 */
+
 	if (document.getElementById("product-product") !== null || document.getElementById("common-home") !== null ) {
 		FastClick.attach(document.body);
 	}

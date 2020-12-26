@@ -21,7 +21,7 @@ class ControllerCommonColumnLeft extends Controller {
 			
 			// Catalog
 			$catalog = array();
-	/**
+	/*
 	if ($this->config->get('module_manager_product_status')) {
     	$this->load->language('catalog/manager_product');
     					
