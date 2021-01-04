@@ -313,7 +313,7 @@
                     desktopFixedView();
                 }
             });
-            $(document).on('click', '.' + options.mobile.button_id, function() {
+            $(document).on('click', '#' + options.mobile.button_id, function() {
                 widget.toggleClass('show');
 
                 if(widget.hasClass('show')) {
@@ -375,7 +375,7 @@
                     desktopButtonView();
                 }
             });
-            $(document).on('click', '.' + options.mobile.button_id, function() {
+            $(document).on('click', '#' + options.mobile.button_id, function() {
                 $(rdrform).collapse('toggle')
             });
 

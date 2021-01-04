@@ -1,9 +1,6 @@
 <section class="dream-filter filter-vertical rdf-side-{{ view['mobile']['side'] }}" id="{{ settings['widget_id'] }}">
     {% if view['mobile']['mode'] != 'none' %}
-        <!--<button id="{{ view['mobile']['button_id'] }}" type="button" class="btn btn-block rdf-mobile-toggle {{ view['btn-primary'] }}">
-            {{ mobile_button_text|striptags|convert_encoding('UTF-8', 'HTML-ENTITIES') }}
-        </button>-->
-        <button type="button" class="btn btn-block rdf-mobile-toggle {{ view['mobile']['button_id'] }} {{ view['btn-primary'] }} ">
+        <button id="{{ view['mobile']['button_id'] }}" type="button" class="btn btn-block rdf-mobile-toggle {{ view['btn-primary'] }}">
             {{ mobile_button_text|striptags|convert_encoding('UTF-8', 'HTML-ENTITIES') }}
         </button>
     {% endif %}

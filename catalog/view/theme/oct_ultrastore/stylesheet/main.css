@@ -240,34 +240,15 @@ header {
 	padding-bottom: 32px;
 }
 
-	.us-logo-img {
-		max-width: 240px !important;
-	}
-
-	@media screen and (max-width: 374px){
-		.us-logo-img {
-			max-width: 100% !important;
-		}
-	}
-
-	@media screen and (min-width: 375px) and (max-width: 767px){
-		.us-logo-img {
-			max-width: 220px !important;
-		}
-	}
-
-	@media screen and (min-width: 768px) and (max-width: 1125px){
-		.us-logo-img {
-			max-width: 100% !important;
-		}
-	}
-
+.us-logo-img {
+	max-width: 160px;
+}
 
 .header-input-group {
 	padding-left: 15px;
     height: 40px;
     position: relative;
-    z-index: 900 !important;
+    z-index: 1000;
 }
 
 .header-input {
@@ -4008,7 +3989,7 @@ span.us-product-info-is {
 #column-right .panel-heading {
     background-color: #f8f8f8!important;
     border-radius: 0!important;
-   /* border: 0!important; */
+    border: 0!important;
     font-size: 18px!important;
     color: #333333!important;
     padding: 10px!important;
@@ -7406,141 +7387,7 @@ span.simple-step-delimiter:before {
 
 	/** Стили слайдера в категории КОНЕЦ **/
 
-	/** Стили дримфильтра **/
-	.dream-filter .panel-title {
-		margin-top: 0;
-		margin-bottom: 0;
-		font-size: 16px;
-		color: inherit;
-	}
 
-	.dream-filter .pull-right {
-		float: right !important;
-	}
-
-	.dream-filter .panel-heading{
-		border-bottom: 1px solid #ddd !important;
-	}
-
-	.dream-filter>.rdf-form .rdf-header, .dream-filter>.rdf-form .rdf-footer, .dream-filter>.rdf-form .rdf-body {
-		display: block;
-		position: relative;
-		margin-bottom: 8px !important;
-	}
-
-	.panel-title > a:hover{
-		text-decoration: underline;
-	}
-
-	.dream-filter.rdf-mobile-view .rdf-mobile-toggle {
-		display: block;
-		position: absolute;
-		overflow: hidden;
-		top: 240px !important;
-		left: 100%;
-		width: auto;
-		height: 35px;
-		line-height: 25px;
-		padding: 5px 10px;
-		padding-left: 15px;
-		text-align: center;
-		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-		box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-	}
-
-	@media screen and (max-width: 991px){
-		.rdf-header > h3 {
-			font-size: 1.2rem;
-		}
-
-		.dream-filter .panel-heading{
-			border-bottom: 1px solid #ddd !important;
-			padding-bottom: 4px !important;
-		}
-	}
-
-	.rdf-header > h3 {
-		font-size: 1.3rem;
-	}
-
-	.rdf-mobile-toggle .fa-filter{
-		font-size: 1.8rem !important;
-	}
-
-	.dream-filter.rdf-mobile-view .rdf-mobile-toggle {
-		display: block;
-		position: absolute;
-		overflow: hidden;
-		top: 0;
-		left: 100%;
-		width: auto;
-		height: 58px !important;
-		line-height: 25px;
-		padding: 15px !important;
-		/* padding-left: 15px; */
-		text-align: center;
-		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-		box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-	}
-
-	.dream-filter .irs-bar, .dream-filter .irs-bar-edge {
-		display: block;
-		position: absolute;
-		height: 10px;
-		left: 0;
-		top: 25px;
-		background: #71BE00 !important;
-		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
-		box-shadow: inset 0 -1px 0 rgba(0,0,0,0.15);
-	}
-
-	.dream-filter .irs-from, .dream-filter .irs-to, .dream-filter .irs-single {
-		left: 0;
-		color: #fff;
-		background: #71BE00 !important;
-	}
-
-	.dream-filter .rdf-group .rdf-label {
-		margin: 0;
-		padding: 0 5px;
-		font-size: 90%;
-		font-weight: 500;
-		background: #71BE00 !important;
-		color: #fff;
-		border-radius: 4px;
-	}
-
-	.btn-primary {
-		color: #fff;
-		background-color: #71BE00 !important;
-		border-color: #71BE00 !important;
-	}
-
-	.rdf-group .rdf-val{
-		margin-right: 6px !important;
-	}
-
-	.dream-filter .rdf-picked .btn {
-		padding: 0 5px;
-		margin: 0 5px 5px 0;
-		font-size: 14px !important;
-		height: 24px;
-		line-height: 24px;
-		border-radius: 3px;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		/* background: red; */
-		color: #fff !important;
-		/* font-weight: bold; */
-		background-color: #EB5757 !important;
-	}
-
-	.rdf-footer .btn{
-		background-color: #EB5757 !important;
-		color: #fff !important;
-	}
-
-	/** Стили дримфильтра КОНЕЦ **/
 
 
 
