@@ -279,7 +279,8 @@ class ControllerExtensionFeedFxSitemap extends Controller {
 						if (!isset($product['keyword'])) {
 							$url .= 'index.php?route=product/product&amp;product_id=' . $product['product_id'];					
 						}else {						
-							$url .= $product['keyword'] . $settings['postfix'];			
+							//$url .= $product['keyword'] . $settings['postfix'];
+							$url .= 'goods/' . $product['keyword'] . $settings['postfix'];
 						}
 						
 						if ($settings['product_lastmod']) $date = (int)$product['date_modified'] > 2000 ? substr($product['date_modified'], 0, 10) : '';
