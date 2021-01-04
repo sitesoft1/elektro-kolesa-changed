@@ -603,8 +603,8 @@ final class OCFilter {
   }
 
   public function link($filter_ocfilter = '') {
-    //$url = '?test_filter=filter';
-    $url = '';
+    $url = '&search=noindex';
+    //$url = '';
 
     if ($this->getPath()) {
       $url .= '&path=' . (string)$this->getPath();

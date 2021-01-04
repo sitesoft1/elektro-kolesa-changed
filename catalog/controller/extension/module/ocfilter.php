@@ -20,7 +20,7 @@ class ControllerExtensionModuleOCFilter extends Controller {
 
     $data['options']              = $this->ocfilter->getOCFilterOptions();
     $data['min_price']            = $this->ocfilter->getMinPrice();
-		$data['max_price']            = $this->ocfilter->getMaxPrice();
+	$data['max_price']            = $this->ocfilter->getMaxPrice();
     $data['min_price_get']        = $this->ocfilter->getMinPriceGet() ? $this->ocfilter->getMinPriceGet() : $this->ocfilter->getMinPrice();
     $data['max_price_get']        = $this->ocfilter->getMaxPriceGet() ? $this->ocfilter->getMaxPriceGet() : $this->ocfilter->getMaxPrice();
     $data['path']                 = $this->ocfilter->getPath();

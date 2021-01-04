@@ -240,9 +240,29 @@ header {
 	padding-bottom: 32px;
 }
 
-.us-logo-img {
-	max-width: 160px;
-}
+/** Поправляем логотип **/
+	.us-logo-img {
+		max-width: 240px !important;
+	}
+
+	@media screen and (max-width: 374px){
+		.us-logo-img {
+			max-width: 100% !important;
+		}
+	}
+
+	@media screen and (min-width: 375px) and (max-width: 767px){
+		.us-logo-img {
+			max-width: 220px !important;
+		}
+	}
+
+	@media screen and (min-width: 768px) and (max-width: 1125px){
+		.us-logo-img {
+			max-width: 100% !important;
+		}
+	}
+/** Поправляем логотип КОНЕЦ **/
 
 .header-input-group {
 	padding-left: 15px;
