@@ -1204,6 +1204,30 @@ public function GetParamsetup($dn_id){
 		}
 		
 	}
+	
+	public function AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $cat_link){
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "pars_cats` SET `dn_id` = '" . (int)$dn_id . "', `parent_cat_id` = '" . (int)$cat_d . "', `cat_id` = '" . (int)$category_id . "', `cat_name` = '" . (string)$category_name . "', `cat_link` = '" . (string)$cat_link . "'");
+		$category_id = $this->db->getLastId();
+		return $category_id;
+	}
+	
+	public function GetParsCat($dn_id, $cat_d, $category_id){
+		$query = $this->db->query("SELECT `id` FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d' AND `cat_id`='$category_id'");
+		if( $query->num_rows > 0 and isset($query->row['id']) ){
+			return $query->row['id'];
+		}else{
+			return false;
+		}
+	}
+	
+	public function GetParsCats($dn_id, $cat_d){
+		$query = $this->db->query("SELECT * FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d'");
+		if( $query->num_rows > 0 ){
+			return $query->rows;
+		}else{
+			return false;
+		}
+	}
 //Ostap parser END
 
 #Получение параметра который редактируем
