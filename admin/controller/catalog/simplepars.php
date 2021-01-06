@@ -28,6 +28,117 @@ class ControllerCatalogSimplePars extends Controller
                 $data["error"] = "Не выбран проект на удаление";
             }
         }
+    
+        //Спарсим дополнительные категории товара для сайта eko-bike.ru
+        if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["add_cats"])) {
+            //Зарузим модель для работы с категориями
+            $this->load->model('catalog/category');
+            $this->load->language('catalog/category');
+            
+            //подключим phpQuery
+            require_once DIR_SYSTEM . 'library/phpQuery/phpQuery-onefile.php';
+            require_once DIR_SYSTEM . 'library/phpQuery/ostap-functions.php';
+            //show("add_cats!!!");
+            $dn_id = $this->request->get["add_cats"];
+            show($dn_id);
+    
+            //зададим необходимые переменные
+            $domain = 'https://eko-bike.ru/';
+            $sleep = 1;
+            $sub_categories_a = '.menu_tags .menu_hide a';
+            $sub_categories_button = '.menu_tags .menu_hide button';
+    
+            $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
+            dump($start_link);
+    
+            $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
+            dump($cat_d);
+    
+            //начнем парсинг
+            $file = file_get_contents($start_link);
+            sleep($sleep);
+            $html = phpQuery::newDocument($file);
+    
+            //find all pagination hrefs
+            $SubCategoriesLinks = [];
+            $WhatFind = $html->find($sub_categories_a);
+            foreach ($WhatFind as $element) {
+                $pq = pq($element); // pq() - Это аналог $ в jQuery
+                $href = $pq->attr('href');
+                if(!empty($href)){
+                    $SubCategoriesLinks[] = array(
+                        'name' => trim($pq->text()),
+                        'href' => $domain.$href
+                    );
+                }
+            }
+            //dump($SubCategoriesLinks);
+    
+            //find all pagination buttons
+            $WhatFind = $html->find($sub_categories_button);
+            foreach ($WhatFind as $element) {
+                $pq = pq($element); // pq() - Это аналог $ в jQuery
+                $href = $pq->attr('value');
+                if(!empty($href) and strlen($href)>21){
+                    $SubCategoriesLinks[] = array(
+                        'name' => trim($pq->text()),
+                        'href' => $href
+                    );
+                }
+            }
+            //dump($SubCategoriesLinks);
+    
+            foreach($SubCategoriesLinks as $SubCategory) {
+                $category_name = $SubCategory['name'];
+                $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
+                if($category_id){
+                    //если категория есть заполняем таблицу
+                    show("Найдена категория $category_id");
+                }
+                else{
+                    
+                    //если категории нет сперва добавим ее а потом заполним таблицу
+                    $category_data = [];
+                    $category_data['parent_id'] = $cat_d;
+                    $category_data['top'] = 1;
+                    $category_data['column'] = 1;
+                    $category_data['sort_order'] = 0;
+                    $category_data['status'] = 1;
+                    $category_data['noindex'] = 1;
+                    $category_data['is_tag'] = 0;
+                    $category_data['category_description'] = array(
+                        1 => array(
+                            'name' => $category_name,
+                            'description' => '',
+                            'meta_title' => $category_name,
+                            'meta_h1' => $category_name,
+                            'meta_description' => '',
+                            'meta_keyword' => '',
+                        )
+                    );
+    
+                    $category_data['category_seo_url'] = array(
+                        0 => array(
+                            1 => translit($category_name)
+                        )
+                    );
+                    $category_data['category_store'] = array(0);
+                    
+                    $category_id = $this->model_catalog_category->addCategory($category_data);
+                    if($category_id){
+                        dump($category_id);
+                        die("Добавлена категория $category_id");
+                    }
+                    
+                }
+                
+            }
+            
+            
+        }
+        //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
+        
+        
         $data["dn_add_link"] = $this->url->link("catalog/simplepars/dnadd", $adap["token"], true);
         $data["link_module"] = $this->url->link("catalog/simplepars", $adap["token"], true);
         $data["act_link"] = $this->url->link("catalog/simplepars/act", $adap["token"] . "&do=1", true);
@@ -1277,6 +1388,7 @@ class ControllerCatalogSimplePars extends Controller
     public function wtf($data)
     {
     }
+    
 }
 
 ?>

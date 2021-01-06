@@ -1184,6 +1184,28 @@ public function GetParamsetup($dn_id){
 	return $data;
 }
 
+//Ostap parser
+	public function GetStartLink($dn_id){
+		$data_setting = $this->db->query("SELECT `start_link` FROM `". DB_PREFIX ."pars_setting` WHERE dn_id=".(int)$dn_id);
+		return $data_setting->row['start_link'];
+	}
+	
+	public function GetParentCat($dn_id){
+		$data_setting = $this->db->query("SELECT `cat_d` FROM `". DB_PREFIX ."pars_prsetup` WHERE dn_id=".(int)$dn_id);
+		return $data_setting->row['cat_d'];
+	}
+	
+	public function GetCategoryByName($cat_d, $category_name){
+		$query = $this->db->query("SELECT `category_id` FROM `". DB_PREFIX ."category_description` WHERE `category_id` IN(SELECT `category_id` FROM `". DB_PREFIX ."category_path` WHERE path_id='$cat_d' AND `category_id`<>'$cat_d') AND `language_id`='1' AND `name`='$category_name'");
+		if($query->num_rows > 0 and isset($query->row['category_id'])){
+			return $query->row['category_id'];
+		}else{
+			return false;
+		}
+		
+	}
+//Ostap parser END
+
 #Получение параметра который редактируем
 public function getActivParam($data){
 	$data_param_activ = $this->db->query("SELECT * FROM `". DB_PREFIX ."pars_param` WHERE id=".(int)$data);
