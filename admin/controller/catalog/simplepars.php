@@ -53,147 +53,150 @@ class ControllerCatalogSimplePars extends Controller
     
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
             dump($start_link);
-    
-            $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
-            //dump($cat_d);
-    
-            //начнем парсинг
-            $file = file_get_contents($start_link);
-            sleep($sleep);
-            $html = phpQuery::newDocument($file);
-    
-            //find all pagination hrefs
-            $SubCategoriesLinks = [];
-            $WhatFind = $html->find($sub_categories_a);
-            foreach ($WhatFind as $element) {
-                $pq = pq($element); // pq() - Это аналог $ в jQuery
-                $href = $pq->attr('href');
-                if(!empty($href)){
-                    $SubCategoriesLinks[] = array(
-                        'name' => trim($pq->text()),
-                        'href' => $domain.$href
-                    );
-                }
-            }
-            //dump($SubCategoriesLinks);
-    
-            //find all pagination buttons
-            $WhatFind = $html->find($sub_categories_button);
-            foreach ($WhatFind as $element) {
-                $pq = pq($element); // pq() - Это аналог $ в jQuery
-                $href = $pq->attr('value');
-                if(!empty($href) and strlen($href)>21){
-                    $SubCategoriesLinks[] = array(
-                        'name' => trim($pq->text()),
-                        'href' => $href
-                    );
-                }
-            }
-            //dump($SubCategoriesLinks);
-    
-            foreach($SubCategoriesLinks as $SubCategory) {
-                $category_name = $SubCategory['name'];
-                $category_link = $SubCategory['href'];
-                
-                $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
-                if($category_id){
-    
-                    $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
-                    if(!$pars_cat_id){
-                        //если категория есть заполняем таблицу
-                        //show("Найдена категория $category_id");
-                        $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
-                    }
-                    
-                }
-                else{
-                    //если категории нет сперва добавим ее а потом заполним таблицу
-                    $category_data = [];
-                    $category_data['parent_id'] = $cat_d;
-                    $category_data['top'] = 0;
-                    $category_data['column'] = 1;
-                    $category_data['sort_order'] = 0;
-                    $category_data['status'] = 1;
-                    $category_data['noindex'] = 1;
-                    $category_data['is_tag'] = 0;
-                    $category_data['category_description'] = array(
-                        1 => array(
-                            'name' => $category_name,
-                            'description' => '',
-                            'meta_title' => $category_name,
-                            'meta_h1' => $category_name,
-                            'meta_description' => '',
-                            'meta_keyword' => '',
-                        )
-                    );
-                    $category_data['category_seo_url'] = array(
-                        0 => array(
-                            1 => translit($category_name)
-                        )
-                    );
-                    $category_data['category_store'] = array(0);
-                    $category_id = $this->model_catalog_category->addCategory($category_data);
-                    
-                    if($category_id){
-                        $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
-                        if(!$pars_cat_id){
-                           // dump($category_id);
-                            $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
-                            //show("Добавлена категория $category_id и в таблицу парсинга под номером $pars_cat_id");
-                        }
-                    }
-                    
-                }
-                
-            }
             
-            //Работаем с товарами
-            $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
-            
-            $cnt = 0;
-            foreach ($pars_categories as $pars_category){
+            if(!empty($start_link) and strstr($start_link, $clear_domain)){
                 
-                if($cnt>2){
-                    die();
-                }
-                
+                $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
+                //dump($cat_d);
+    
                 //начнем парсинг
-                $cat_link = $pars_category['cat_link'].'page-all';
-                $file = file_get_contents($cat_link);
+                $file = file_get_contents($start_link);
                 sleep($sleep);
                 $html = phpQuery::newDocument($file);
     
                 //find all pagination hrefs
-                $ProductsLinks = [];
-                $WhatFind = $html->find($product_a);
+                $SubCategoriesLinks = [];
+                $WhatFind = $html->find($sub_categories_a);
                 foreach ($WhatFind as $element) {
                     $pq = pq($element); // pq() - Это аналог $ в jQuery
                     $href = $pq->attr('href');
-                    
-                    $h4 = $pq->find('h4');
-                    $pq_h4 = pq($h4);
-                    $name = $pq_h4->text();
-                    
                     if(!empty($href)){
-                        $ProductsLinks[] = array(
-                            'name' => trim($name),
-                            'href' => $clear_domain.$href
+                        $SubCategoriesLinks[] = array(
+                            'name' => trim($pq->text()),
+                            'href' => $domain.$href
                         );
-                        
-                        
-                        $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
-                        if($product_id){
-                            $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                            show_strong("обновлены категории у товара $product_id");
-                        }
-                        
                     }
                 }
-                //dump($ProductsLinks);
-                
-                $cnt++;
-            }
+                //dump($SubCategoriesLinks);
+    
+                //find all pagination buttons
+                $WhatFind = $html->find($sub_categories_button);
+                foreach ($WhatFind as $element) {
+                    $pq = pq($element); // pq() - Это аналог $ в jQuery
+                    $href = $pq->attr('value');
+                    if(!empty($href) and strlen($href)>21){
+                        $SubCategoriesLinks[] = array(
+                            'name' => trim($pq->text()),
+                            'href' => $href
+                        );
+                    }
+                }
+                //dump($SubCategoriesLinks);
+    
+                foreach($SubCategoriesLinks as $SubCategory) {
+                    $category_name = $SubCategory['name'];
+                    $category_link = $SubCategory['href'];
+        
+                    $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
+                    if($category_id){
             
+                        $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
+                        if(!$pars_cat_id){
+                            //если категория есть заполняем таблицу
+                            //show("Найдена категория $category_id");
+                            $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
+                        }
+            
+                    }
+                    else{
+                        //если категории нет сперва добавим ее а потом заполним таблицу
+                        $category_data = [];
+                        $category_data['parent_id'] = $cat_d;
+                        $category_data['top'] = 0;
+                        $category_data['column'] = 1;
+                        $category_data['sort_order'] = 0;
+                        $category_data['status'] = 1;
+                        $category_data['noindex'] = 1;
+                        $category_data['is_tag'] = 0;
+                        $category_data['category_description'] = array(
+                            1 => array(
+                                'name' => $category_name,
+                                'description' => '',
+                                'meta_title' => $category_name,
+                                'meta_h1' => $category_name,
+                                'meta_description' => '',
+                                'meta_keyword' => '',
+                            )
+                        );
+                        $category_data['category_seo_url'] = array(
+                            0 => array(
+                                1 => translit($category_name)
+                            )
+                        );
+                        $category_data['category_store'] = array(0);
+                        $category_id = $this->model_catalog_category->addCategory($category_data);
+            
+                        if($category_id){
+                            $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
+                            if(!$pars_cat_id){
+                                // dump($category_id);
+                                $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
+                                //show("Добавлена категория $category_id и в таблицу парсинга под номером $pars_cat_id");
+                            }
+                        }
+            
+                    }
+        
+                }
+    
+                //Работаем с товарами
+                $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
+    
+                $cnt = 0;
+                foreach ($pars_categories as $pars_category){
+        
+                    if($cnt>2){
+                        die();
+                    }
+        
+                    //начнем парсинг
+                    $cat_link = $pars_category['cat_link'].'page-all';
+                    $file = file_get_contents($cat_link);
+                    sleep($sleep);
+                    $html = phpQuery::newDocument($file);
+        
+                    //find all pagination hrefs
+                    $ProductsLinks = [];
+                    $WhatFind = $html->find($product_a);
+                    foreach ($WhatFind as $element) {
+                        $pq = pq($element); // pq() - Это аналог $ в jQuery
+                        $href = $pq->attr('href');
+            
+                        $h4 = $pq->find('h4');
+                        $pq_h4 = pq($h4);
+                        $name = $pq_h4->text();
+            
+                        if(!empty($href)){
+                            $ProductsLinks[] = array(
+                                'name' => trim($name),
+                                'href' => $clear_domain.$href
+                            );
+                
+                
+                            $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
+                            if($product_id){
+                                $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                                show_strong("обновлены категории у товара $product_id");
+                            }
+                
+                        }
+                    }
+                    //dump($ProductsLinks);
+        
+                    $cnt++;
+                }
+    
+            }
             
         }
         //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
