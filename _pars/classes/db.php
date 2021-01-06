@@ -20,9 +20,9 @@ class Db
         if ($this->db->connect_errno) {
             echo "Не удалось подключиться к MySQL: (" . $this->db->connect_errno . ") " . $this->db->connect_error;
         }else{
-           // echo "Подключение к базе прошло успешно!";
+            echo "Подключение к базе прошло успешно!";
         }
-        $this->db->set_charset(DB_CHARSET);
+        ///$this->db->set_charset(DB_CHARSET);
         //DB CONNECT END
         
         //$this->db = new DB(DB_DRIVER, DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
