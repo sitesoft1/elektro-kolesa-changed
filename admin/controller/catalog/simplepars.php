@@ -44,6 +44,7 @@ class ControllerCatalogSimplePars extends Controller
     
             //зададим необходимые переменные
             $domain = 'https://eko-bike.ru/';
+            $clear_domain = 'https://eko-bike.ru';
             $sleep = 1;
             $sub_categories_a = '.menu_tags .menu_hide a';
             $sub_categories_button = '.menu_tags .menu_hide button';
@@ -176,11 +177,19 @@ class ControllerCatalogSimplePars extends Controller
                     if(!empty($href)){
                         $ProductsLinks[] = array(
                             'name' => trim($name),
-                            'href' => $domain.$href
+                            'href' => $clear_domain.$href
                         );
+                        
+                        
+                        $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
+                        if($product_id){
+                            $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                            show_strong("обновлены категории у товара $product_id");
+                        }
+                        
                     }
                 }
-                dump($ProductsLinks);
+                //dump($ProductsLinks);
                 
                 $cnt++;
             }

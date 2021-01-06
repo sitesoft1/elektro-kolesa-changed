@@ -1228,6 +1228,21 @@ public function GetParamsetup($dn_id){
 			return false;
 		}
 	}
+	
+	public function GetProductId($dn_id, $name, $category_id){
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id') AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id') AND `language_id`='1' AND `name`='$name'");
+		if( $query->num_rows > 0 ){
+			return $query->row['product_id'];
+		}else{
+			return false;
+		}
+	}
+	
+	
+	public function UpdateProductCategories($product_id, $category_id){
+		$this->db->query("INSERT INTO `". DB_PREFIX ."product_to_category` SET `product_id`='$product_id', `category_id`='$category_id', `main_category`='0'");
+	}
+	
 //Ostap parser END
 
 #Получение параметра который редактируем
