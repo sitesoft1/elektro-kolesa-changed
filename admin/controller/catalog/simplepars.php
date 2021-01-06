@@ -38,17 +38,15 @@ class ControllerCatalogSimplePars extends Controller
             //подключим phpQuery
             require_once DIR_SYSTEM . 'library/phpQuery/phpQuery-onefile.php';
             require_once DIR_SYSTEM . 'library/phpQuery/ostap-functions.php';
-            //show("add_cats!!!");
+            
             $dn_id = $this->request->get["add_cats"];
-            show($dn_id);
     
             //зададим необходимые переменные
             $domain = 'https://eko-bike.ru/';
             $clear_domain = 'https://eko-bike.ru';
-            $sleep = 1;
+            $usleep = 10000;//0.1 секунды
             $sub_categories_a = '.menu_tags .menu_hide a';
             $sub_categories_button = '.menu_tags .menu_hide button';
-            $product_a = '#fn_products_content a.product_preview__name_link';
             $product_h4 = '#fn_products_content a.product_preview__name_link h4';
     
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
@@ -57,11 +55,10 @@ class ControllerCatalogSimplePars extends Controller
             if(!empty($start_link) and strstr($start_link, $clear_domain)){
                 
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
-                //dump($cat_d);
-    
+                
                 //начнем парсинг
                 $file = file_get_contents($start_link);
-                sleep($sleep);
+                usleep($usleep);
                 $html = phpQuery::newDocument($file);
     
                 //find all pagination hrefs
@@ -77,7 +74,6 @@ class ControllerCatalogSimplePars extends Controller
                         );
                     }
                 }
-                //dump($SubCategoriesLinks);
     
                 //find all pagination buttons
                 $WhatFind = $html->find($sub_categories_button);
@@ -91,7 +87,6 @@ class ControllerCatalogSimplePars extends Controller
                         );
                     }
                 }
-                //dump($SubCategoriesLinks);
     
                 foreach($SubCategoriesLinks as $SubCategory) {
                     $category_name = $SubCategory['name'];
@@ -103,7 +98,6 @@ class ControllerCatalogSimplePars extends Controller
                         $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
                         if(!$pars_cat_id){
                             //если категория есть заполняем таблицу
-                            //show("Найдена категория $category_id");
                             $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
                         }
             
@@ -139,9 +133,7 @@ class ControllerCatalogSimplePars extends Controller
                         if($category_id){
                             $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
                             if(!$pars_cat_id){
-                                // dump($category_id);
                                 $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
-                                //show("Добавлена категория $category_id и в таблицу парсинга под номером $pars_cat_id");
                             }
                         }
             
@@ -154,44 +146,26 @@ class ControllerCatalogSimplePars extends Controller
     
                 $cnt = 0;
                 foreach ($pars_categories as $pars_category){
-        
-                    if($cnt>2){
-                        die();
-                    }
-        
+                    //if($cnt>2){die();}//zakomentit
                     //начнем парсинг
                     $cat_link = $pars_category['cat_link'].'page-all';
                     $file = file_get_contents($cat_link);
-                    sleep($sleep);
+                    usleep($usleep);
                     $html = phpQuery::newDocument($file);
         
                     //find all pagination hrefs
-                    $ProductsLinks = [];
-                    $WhatFind = $html->find($product_a);
+                    $WhatFind = $html->find($product_h4);
                     foreach ($WhatFind as $element) {
                         $pq = pq($element); // pq() - Это аналог $ в jQuery
-                        $href = $pq->attr('href');
-            
-                        $h4 = $pq->find('h4');
-                        $pq_h4 = pq($h4);
-                        $name = $pq_h4->text();
-            
-                        if(!empty($href)){
-                            $ProductsLinks[] = array(
-                                'name' => trim($name),
-                                'href' => $clear_domain.$href
-                            );
-                
-                
+                        $name = $pq->text();
+                        if(!empty($name)){
                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
                             if($product_id){
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                show_strong("обновлены категории у товара $product_id");
+                                show_strong("обновлены категории у товара: $name с id - $product_id");
                             }
-                
                         }
                     }
-                    //dump($ProductsLinks);
         
                     $cnt++;
                 }
