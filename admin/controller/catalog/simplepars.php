@@ -144,6 +144,7 @@ class ControllerCatalogSimplePars extends Controller
                 //Работаем с товарами
                 $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
     
+                $up_produtcs = array();
                 $cnt = 0;
                 foreach ($pars_categories as $pars_category){
                     //if($cnt>2){die();}//zakomentit
@@ -163,14 +164,21 @@ class ControllerCatalogSimplePars extends Controller
                             if($product_id){
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
                                 show_strong("обновлены категории у товара: $name с id - $product_id");
-                                $this->ocLog('update_product_categories_log', $product_id, true);
+                                $up_produtcs[] = $product_id;
+                                //$this->ocLog('update_product_categories_log', $product_id, true);
+                            }else{
+                            
                             }
                         }
                     }
         
                     $cnt++;
                 }
-    
+                
+                //Запишем в лог данные об обновленных товарах
+                $up_produtcs = array_unique($up_produtcs);
+                $this->ocLog('update_product_categories_log', $up_produtcs, true);
+                
             }
             
         }
