@@ -47,7 +47,9 @@ class ControllerCatalogSimplePars extends Controller
             $usleep = 10000;//0.1 секунды
             $sub_categories_a = '.menu_tags .menu_hide a';
             $sub_categories_button = '.menu_tags .menu_hide button';
-            $product_h4 = '#fn_products_content a.product_preview__name_link h4';
+            $product_a = '#fn_products_content a.product_preview__name_link';
+            //$product_h4 = '#fn_products_content a.product_preview__name_link h4';
+            $product_name = 'h1.block__heading > span';
     
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
             dump($start_link);
@@ -155,10 +157,15 @@ class ControllerCatalogSimplePars extends Controller
                     $html = phpQuery::newDocument($file);
         
                     //find all pagination hrefs
-                    $WhatFind = $html->find($product_h4);
+                    $WhatFind = $html->find($product_a);
                     foreach ($WhatFind as $element) {
                         $pq = pq($element); // pq() - Это аналог $ в jQuery
-                        $name = $pq->text();
+                        $href = $pq->attr('href');
+                        
+                        $h4 = $pq->find('h4');
+                        $pq_h4 = pq($h4);
+                        $name = $pq_h4->text();
+                        
                         if(!empty($name)){
                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
                             if($product_id){
@@ -166,8 +173,27 @@ class ControllerCatalogSimplePars extends Controller
                                 show_strong("обновлены категории у товара: $name с id - $product_id");
                                 $up_produtcs[] = $product_id;
                                 //$this->ocLog('update_product_categories_log', $product_id, true);
-                            }else{
-                            
+                            }
+                            else{
+                                //если товар не найден по короткому заголовку поищем его по полному
+                                $prod_file = file_get_contents($domain.$href);
+                                usleep($usleep);
+                                $prod_html = phpQuery::newDocument($prod_file);
+    
+                                $prod_WhatFind = $prod_html->find($product_name);
+                                foreach ($prod_WhatFind as $prod_element) {
+                                    $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
+                                    $name = $prod_pq->text();
+                                    if(!empty($name)){
+                                        $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
+                                        if($product_id){
+                                            $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                                            show_strong("обновлены категории у товара: $name с id - $product_id");
+                                            $up_produtcs[] = $product_id;
+                                            //$this->ocLog('update_product_categories_log', $product_id, true);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
