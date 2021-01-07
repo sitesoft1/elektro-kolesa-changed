@@ -1,4 +1,5 @@
 <?php
+ignore_user_abort(true);
 set_time_limit(0);
 class ControllerCatalogSimplePars extends Controller
 {
@@ -147,9 +148,11 @@ class ControllerCatalogSimplePars extends Controller
                 $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
     
                 $up_produtcs = array();
+                //$dont_up_produtcs = array();
                 $cnt = 0;
                 foreach ($pars_categories as $pars_category){
                     //if($cnt>2){die();}//zakomentit
+                    //if($cnt>2){break;}//zakomentit
                     //начнем парсинг
                     $cat_link = $pars_category['cat_link'].'page-all';
                     $file = file_get_contents($cat_link);
@@ -170,43 +173,58 @@ class ControllerCatalogSimplePars extends Controller
                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
                             if($product_id){
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                show_strong("обновлены категории у товара: $name с id - $product_id");
+                                show_strong("Товару: $name с id - $product_id добавлена категория".$pars_category['cat_id']);
                                 $up_produtcs[] = $product_id;
                                 //$this->ocLog('update_product_categories_log', $product_id, true);
                             }
                             else{
-                                //если товар не найден по короткому заголовку поищем его по полному
-                                $prod_file = file_get_contents($domain.$href);
-                                usleep($usleep);
-                                $prod_html = phpQuery::newDocument($prod_file);
     
-                                $prod_WhatFind = $prod_html->find($product_name);
-                                foreach ($prod_WhatFind as $prod_element) {
-                                    $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
-                                    $name = $prod_pq->text();
-                                    if(!empty($name)){
-                                        $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
-                                        if($product_id){
-                                            $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                            show_strong("обновлены категории у товара: $name с id - $product_id");
-                                            $up_produtcs[] = $product_id;
-                                            //$this->ocLog('update_product_categories_log', $product_id, true);
+                                $like_product_id = $this->model_catalog_simplepars->GetLikeProductId($dn_id, $name, $pars_category['cat_id']);
+                                if($like_product_id){
+                                    //если товар не найден по короткому заголовку поищем его по полному
+                                    $prod_file = file_get_contents($domain.$href);
+                                    usleep($usleep);
+                                    $prod_html = phpQuery::newDocument($prod_file);
+    
+                                    $prod_WhatFind = $prod_html->find($product_name);
+                                    foreach ($prod_WhatFind as $prod_element) {
+                                        $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
+                                        $prod_name = $prod_pq->text();
+                                        if(!empty($prod_name)){
+                                            $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $prod_name, $pars_category['cat_id']);
+                                            if($product_id){
+                                                $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                                                show_strong("Товару: $prod_name с id - $product_id добавлена категория".$pars_category['cat_id']);
+                                                $up_produtcs[] = $product_id;
+                                                //$this->ocLog('update_product_categories_log', $product_id, true);
+                                            }
                                         }
                                     }
                                 }
+                                
+                                
                             }
+                            
                         }
                     }
         
                     $cnt++;
                 }
                 
-                //Запишем в лог данные об обновленных товарах
+               
                 $up_produtcs = array_unique($up_produtcs);
+                
+                //Пройдем товары что не были найдены по названию из страницы категории
+               // $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
+    
+                //Запишем в лог данные об обновленных товарах
+                $this->ocLog('update_product_categories_log', '', false);
                 $this->ocLog('update_product_categories_log', $up_produtcs, true);
                 
             }
             
+            $count_up_products = count($up_produtcs);
+            die("Всего обновлено товаров $count_up_products");
         }
         //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
         
