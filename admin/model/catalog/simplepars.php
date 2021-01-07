@@ -1246,6 +1246,7 @@ public function GetParamsetup($dn_id){
 		}
 	}
 	
+	/*
 	public function GetExcludedProducts($dn_id){
 		$query = $this->db->query("SELECT DISTINCT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id` NOT IN(SELECT `cat_id` FROM `oc_pars_cats` WHERE `dn_id`='$dn_id') AND `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id') AND `product_id` NOT IN(SELECT DISTINCT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id` IN(SELECT `cat_id` FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id'))");
 		
@@ -1255,6 +1256,7 @@ public function GetParamsetup($dn_id){
 			return false;
 		}
 	}
+	*/
 	
 	
 	public function UpdateProductCategories($product_id, $category_id){

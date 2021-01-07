@@ -53,15 +53,23 @@ class ControllerCatalogSimplePars extends Controller
             $product_name = 'h1.block__heading > span';
     
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
-            dump($start_link);
+            show("Сбор категорий по ссылке: ".$start_link);
+            $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
             
             if(!empty($start_link) and strstr($start_link, $clear_domain)){
                 
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
                 
                 //начнем парсинг
-                $file = file_get_contents($start_link);
-                usleep($usleep);
+                try {
+                    $file = file_get_contents($start_link);
+                }
+                catch(Exception $e){
+                    $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                    $err = $info . $e->getMessage();
+                    $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+                }
+                //usleep($usleep);
                 $html = phpQuery::newDocument($file);
     
                 //find all pagination hrefs
@@ -155,8 +163,16 @@ class ControllerCatalogSimplePars extends Controller
                     //if($cnt>2){break;}//zakomentit
                     //начнем парсинг
                     $cat_link = $pars_category['cat_link'].'page-all';
-                    $file = file_get_contents($cat_link);
-                    usleep($usleep);
+    
+                    try {
+                        $file = file_get_contents($cat_link);
+                    }
+                    catch(Exception $e){
+                        $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                        $err = $info . $e->getMessage();
+                        $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+                    }
+                    //usleep($usleep);
                     $html = phpQuery::newDocument($file);
         
                     //find all pagination hrefs
@@ -173,7 +189,8 @@ class ControllerCatalogSimplePars extends Controller
                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
                             if($product_id){
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                show_strong("Товару: $name с id - $product_id добавлена категория".$pars_category['cat_id']);
+                                show("Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']);
+                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id'], true);
                                 $up_produtcs[] = $product_id;
                                 //$this->ocLog('update_product_categories_log', $product_id, true);
                             }
@@ -182,8 +199,15 @@ class ControllerCatalogSimplePars extends Controller
                                 $like_product_id = $this->model_catalog_simplepars->GetLikeProductId($dn_id, $name, $pars_category['cat_id']);
                                 if($like_product_id){
                                     //если товар не найден по короткому заголовку поищем его по полному
-                                    $prod_file = file_get_contents($domain.$href);
-                                    usleep($usleep);
+                                    try {
+                                        $prod_file = file_get_contents($domain.$href);
+                                    }
+                                    catch(Exception $e){
+                                        $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                                        $err = $info . $e->getMessage();
+                                        $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+                                    }
+                                    //usleep($usleep);
                                     $prod_html = phpQuery::newDocument($prod_file);
     
                                     $prod_WhatFind = $prod_html->find($product_name);
@@ -194,7 +218,8 @@ class ControllerCatalogSimplePars extends Controller
                                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $prod_name, $pars_category['cat_id']);
                                             if($product_id){
                                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                                show_strong("Товару: $prod_name с id - $product_id добавлена категория".$pars_category['cat_id']);
+                                                show("Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']);
+                                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id'], true);
                                                 $up_produtcs[] = $product_id;
                                                 //$this->ocLog('update_product_categories_log', $product_id, true);
                                             }
@@ -213,6 +238,7 @@ class ControllerCatalogSimplePars extends Controller
                 
                
                 $up_produtcs = array_unique($up_produtcs);
+                $count_up_products = count($up_produtcs);
                 
                 //Пройдем товары что не были найдены по названию из страницы категории
                // $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
@@ -220,11 +246,12 @@ class ControllerCatalogSimplePars extends Controller
                 //Запишем в лог данные об обновленных товарах
                 $this->ocLog('update_product_categories_log', '', false);
                 $this->ocLog('update_product_categories_log', $up_produtcs, true);
+                $this->ocLog('simple_pars_progress_add_cats_log', "Всего обновлено товаров ".$count_up_products, true);
+                $this->ocLog('update_product_categories_log', "Всего обновлено товаров ".$count_up_products, true);
                 
             }
             
-            $count_up_products = count($up_produtcs);
-            die("Всего обновлено товаров $count_up_products");
+            die("<strong> Всего обновлено товаров $count_up_products </strong>");
         }
         //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
         
