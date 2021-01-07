@@ -1202,7 +1202,6 @@ public function GetParamsetup($dn_id){
 		}else{
 			return false;
 		}
-		
 	}
 	
 	public function AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $cat_link){
@@ -1230,7 +1229,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetProductId($dn_id, $name, $category_id){
-		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE (`product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id')) AND (`product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='$name'");
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='$name'");
 		if( $query->num_rows > 0 ){
 			return $query->row['product_id'];
 		}else{

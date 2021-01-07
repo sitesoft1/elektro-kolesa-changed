@@ -163,6 +163,7 @@ class ControllerCatalogSimplePars extends Controller
                             if($product_id){
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
                                 show_strong("обновлены категории у товара: $name с id - $product_id");
+                                $this->ocLog('update_product_categories_log', $product_id, true);
                             }
                         }
                     }
@@ -1424,6 +1425,16 @@ class ControllerCatalogSimplePars extends Controller
     
     public function wtf($data)
     {
+    }
+    
+    public function ocLog($filename, $data, $append=false)
+    {
+        if(!$append){
+            file_put_contents(DIR_LOGS . $filename . '.txt', var_export($data,true));
+        }else{
+            file_put_contents(DIR_LOGS . $filename . '.txt', var_export($data,true).PHP_EOL, FILE_APPEND);
+        }
+        
     }
     
 }
