@@ -43,13 +43,14 @@ class ControllerCatalogSimplePars extends Controller
             $dn_id = $this->request->get["add_cats"];
     
             //зададим необходимые переменные
-            $domain = 'https://eko-bike.ru/';
             $clear_domain = 'https://eko-bike.ru';
+            $domain = $clear_domain . '/';
+            
             $usleep = 10000;//0.1 секунды
             $sub_categories_a = '.menu_tags .menu_hide a';
             $sub_categories_button = '.menu_tags .menu_hide button';
             $product_a = '#fn_products_content a.product_preview__name_link';
-            //$product_h4 = '#fn_products_content a.product_preview__name_link h4';
+            $product_h4 = 'h4';
             $product_name = 'h1.block__heading > span';
     
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
@@ -181,7 +182,7 @@ class ControllerCatalogSimplePars extends Controller
                         $pq = pq($element); // pq() - Это аналог $ в jQuery
                         $href = $pq->attr('href');
                         
-                        $h4 = $pq->find('h4');
+                        $h4 = $pq->find($product_h4);
                         $pq_h4 = pq($h4);
                         $name = $pq_h4->text();
                         
@@ -241,17 +242,42 @@ class ControllerCatalogSimplePars extends Controller
                 $count_up_products = count($up_produtcs);
                 
                 //Пройдем товары что не были найдены по названию из страницы категории
-               // $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
-    
+                $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
+                $this->ocLog('excluded_products_log', $excluded_products, false);//ubrat
+                
+                if($excluded_products){
+                    $count_excluded_products = count($excluded_products);
+                }
+                
+                if(!empty($count_excluded_products)){
+                    $count_all_products = $count_up_products + $count_excluded_products;
+                }
+                
                 //Запишем в лог данные об обновленных товарах
                 $this->ocLog('update_product_categories_log', '', false);
                 $this->ocLog('update_product_categories_log', $up_produtcs, true);
-                $this->ocLog('simple_pars_progress_add_cats_log', "Всего обновлено товаров ".$count_up_products, true);
-                $this->ocLog('update_product_categories_log', "Всего обновлено товаров ".$count_up_products, true);
+                $this->ocLog('simple_pars_progress_add_cats_log', "Обновлено товаров: ".$count_up_products, true);
+                $this->ocLog('update_product_categories_log', "Обновлено товаров: ".$count_up_products, true);
+    
+                if(isset($count_excluded_products)){
+                    $this->ocLog('simple_pars_progress_add_cats_log', "Пропущено товаров без дочерних категорий: ".$count_excluded_products, true);
+                    $this->ocLog('update_product_categories_log', "Пропущено товаров без дочерних категорий: ".$count_excluded_products, true);
+                }
+                
+                if(isset($count_all_products)){
+                    $this->ocLog('simple_pars_progress_add_cats_log', "Всего товаров пройдено скриптом: ".$count_all_products, true);
+                    $this->ocLog('update_product_categories_log', "Всего товаров пройдено скриптом: ".$count_all_products, true);
+                }
+                
                 
             }
             
-            die("<strong> Всего обновлено товаров $count_up_products </strong>");
+            if(isset($count_excluded_products) and isset($count_all_products)){
+                die("<strong> Обновлено товаров: $count_up_products </strong><br><strong>Пропущено товаров без дочерних категорий: $count_excluded_products </strong><br><strong>Всего товаров пройдено скриптом: $count_all_products </strong>");
+            }else{
+                die("<strong> Обновлено товаров: $count_up_products </strong>");
+            }
+            
         }
         //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
         
