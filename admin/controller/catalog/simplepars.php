@@ -47,7 +47,7 @@ class ControllerCatalogSimplePars extends Controller
             $clear_domain = $cats_settings['clear_domain'];
             $domain = $clear_domain . '/';
             
-            $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды
+            $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды.
             $sub_categories_a = $cats_settings['sub_categories_a'];
             $cat_link_end = $cats_settings['cat_link_end'];
             $sub_categories_button = $cats_settings['sub_categories_button'];
