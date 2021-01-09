@@ -42,24 +42,30 @@ class ControllerCatalogSimplePars extends Controller
             
             $dn_id = $this->request->get["add_cats"];
             $cats_settings = $this->model_catalog_simplepars->getCatsSettings($dn_id);
-    
+            
             //зададим необходимые переменные
             $clear_domain = $cats_settings['clear_domain'];
             $domain = $clear_domain . '/';
+    
+            //pagination
+            /*
+            $pagination = 'page-2|38';
+            $pagination_arr = explode('|', $pagination);
+            $pagination_start = (int) preg_replace("/[^0-9]/", '', $pagination_arr[0]);
+            $pagination_end = (int) preg_replace("/[^0-9]/", '', $pagination_arr[1]);
+            $pagination_text = preg_replace('/\d/', '', $pagination_arr[0]);
+            */
             
-            $parent_menu_category = "header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name";
+            $parent_menu_category = htmlspecialchars_decode($cats_settings['sub_categories_a']);
             $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды.
-            $sub_categories_a = $cats_settings['sub_categories_a'];
             $cat_link_end = $cats_settings['cat_link_end'];
-            $sub_categories_button = $cats_settings['sub_categories_button'];
-            $product_a = $cats_settings['product_a'];
-            $product_name = $cats_settings['product_name'];
-            $product_h4 = $cats_settings['product_h4'];
+            $product_a = htmlspecialchars_decode($cats_settings['product_a']);
+            $product_name = htmlspecialchars_decode($cats_settings['product_name']);
+            $product_h4 = htmlspecialchars_decode($cats_settings['product_h4']);
             $is_top = $cats_settings['is_top'];
             $is_tag = $cats_settings['is_tag'];
             
-            //$start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
-            $start_link = 'https://eko-bike.ru/elektrovelosipedyi/';
+            $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
             show("Сбор категорий по ссылке: ".$start_link);
             $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
             
@@ -166,6 +172,8 @@ class ControllerCatalogSimplePars extends Controller
     
                 //Работаем с товарами
                 $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
+                
+                
     
                 $up_produtcs = array();
                 //$dont_up_produtcs = array();
@@ -190,7 +198,6 @@ class ControllerCatalogSimplePars extends Controller
                     }
                     
                     $html = phpQuery::newDocument($file);
-        
                     //find all pagination hrefs
                     $WhatFind = $html->find($product_a);
                     foreach ($WhatFind as $element) {

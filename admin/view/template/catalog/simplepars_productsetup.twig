@@ -1427,27 +1427,18 @@
 
                     <legend>phpQuery Селекторы (аналог jQuery):</legend>
                     <div class="form-group">
-                      <label class="col-sm-2 control-label" for="input-pr">Селектор ссылки подкатегории:</label>
+                      <label class="col-sm-2 control-label" for="input-pr">Селектор главной (родительской) категории в меню:</label>
                       <div class="col-sm-8">
                         <input name="sub_categories_a" id="sub_categories_a" type="text" value="{{ cats_settings['sub_categories_a'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
                     <div class="form-group">
-                      <label class="col-sm-2 control-label" for="input-pr">Подставить в конец ссылки на категорию:
-                        <span data-toggle="tooltip" data-original-title="Будет подставлено в конец ссылки категории для получения страницы со всеми товарами"></span>
+                      <label class="col-sm-2 control-label" for="input-pr">Подставить в конец ссылки на дочернюю категорию:
+                        <span data-toggle="tooltip" data-original-title="Будет подставлено в конец ссылки дочерней категории для получения страницы со всеми товарами"></span>
                       </label>
                       <div class="col-sm-8">
                         <input name="cat_link_end" id="cat_link_end" type="text" value="{{ cats_settings['cat_link_end'] }}" id="input-pr" class="form-control">
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="col-sm-2 control-label" for="input-pr">Селектор кнопки подкатегории:
-                        <span data-toggle="tooltip" data-original-title="Если не указано то категории кнопки не будут собиратся"></span>
-                      </label>
-                      <div class="col-sm-8">
-                        <input name="sub_categories_button" id="sub_categories_button" type="text" value="{{ cats_settings['sub_categories_button'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
