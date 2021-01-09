@@ -41,18 +41,22 @@ class ControllerCatalogSimplePars extends Controller
             require_once DIR_SYSTEM . 'library/phpQuery/ostap-functions.php';
             
             $dn_id = $this->request->get["add_cats"];
+            $cats_settings = $this->model_catalog_simplepars->getCatsSettings($dn_id);
     
             //зададим необходимые переменные
-            $clear_domain = 'https://eko-bike.ru';
+            $clear_domain = $cats_settings['clear_domain'];
             $domain = $clear_domain . '/';
             
-            $usleep = 10000;//0.1 секунды
-            $sub_categories_a = '.menu_tags .menu_hide a';
-            $sub_categories_button = '.menu_tags .menu_hide button';
-            $product_a = '#fn_products_content a.product_preview__name_link';
-            $product_h4 = 'h4';
-            $product_name = 'h1.block__heading > span';
-    
+            $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды
+            $sub_categories_a = $cats_settings['sub_categories_a'];
+            $cat_link_end = $cats_settings['cat_link_end'];
+            $sub_categories_button = $cats_settings['sub_categories_button'];
+            $product_a = $cats_settings['product_a'];
+            $product_name = $cats_settings['product_name'];
+            $product_h4 = $cats_settings['product_h4'];
+            $is_top = $cats_settings['is_top'];
+            $is_tag = $cats_settings['is_tag'];
+            
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
             show("Сбор категорий по ссылке: ".$start_link);
             $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
@@ -70,7 +74,12 @@ class ControllerCatalogSimplePars extends Controller
                     $err = $info . $e->getMessage();
                     $this->ocLog('simple_pars_add_cats_error_log', $err, true);
                 }
-                //usleep($usleep);
+                
+                if(isset($usleep) and !empty($usleep)){
+                    usleep($usleep);
+                }
+                
+                
                 $html = phpQuery::newDocument($file);
     
                 //find all pagination hrefs
@@ -87,43 +96,42 @@ class ControllerCatalogSimplePars extends Controller
                     }
                 }
     
-                //find all pagination buttons
-                $WhatFind = $html->find($sub_categories_button);
-                foreach ($WhatFind as $element) {
-                    $pq = pq($element); // pq() - Это аналог $ в jQuery
-                    $href = $pq->attr('value');
-                    if(!empty($href) and strlen($href)>21){
-                        $SubCategoriesLinks[] = array(
-                            'name' => trim($pq->text()),
-                            'href' => $href
-                        );
+                if(isset($sub_categories_button) and !empty($sub_categories_button)){
+                    //find all pagination buttons
+                    $WhatFind = $html->find($sub_categories_button);
+                    foreach ($WhatFind as $element) {
+                        $pq = pq($element); // pq() - Это аналог $ в jQuery
+                        $href = $pq->attr('value');
+                        if(!empty($href) and strlen($href)>21){
+                            $SubCategoriesLinks[] = array(
+                                'name' => trim($pq->text()),
+                                'href' => $href
+                            );
+                        }
                     }
                 }
-    
+                
                 foreach($SubCategoriesLinks as $SubCategory) {
                     $category_name = $SubCategory['name'];
                     $category_link = $SubCategory['href'];
-        
                     $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
                     if($category_id){
-            
                         $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
                         if(!$pars_cat_id){
                             //если категория есть заполняем таблицу
                             $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
                         }
-            
                     }
                     else{
                         //если категории нет сперва добавим ее а потом заполним таблицу
                         $category_data = [];
                         $category_data['parent_id'] = $cat_d;
-                        $category_data['top'] = 0;
+                        $category_data['top'] = $is_top;
                         $category_data['column'] = 1;
                         $category_data['sort_order'] = 0;
                         $category_data['status'] = 1;
                         $category_data['noindex'] = 1;
-                        $category_data['is_tag'] = 0;
+                        $category_data['is_tag'] = $is_tag;
                         $category_data['category_description'] = array(
                             1 => array(
                                 'name' => $category_name,
@@ -163,7 +171,7 @@ class ControllerCatalogSimplePars extends Controller
                     //if($cnt>2){die();}//zakomentit
                     //if($cnt>2){break;}//zakomentit
                     //начнем парсинг
-                    $cat_link = $pars_category['cat_link'].'page-all';
+                    $cat_link = $pars_category['cat_link'].$cat_link_end;
     
                     try {
                         $file = file_get_contents($cat_link);
@@ -173,7 +181,11 @@ class ControllerCatalogSimplePars extends Controller
                         $err = $info . $e->getMessage();
                         $this->ocLog('simple_pars_add_cats_error_log', $err, true);
                     }
-                    //usleep($usleep);
+                    
+                    if(isset($usleep) and !empty($usleep)){
+                        usleep($usleep);
+                    }
+                    
                     $html = phpQuery::newDocument($file);
         
                     //find all pagination hrefs
@@ -208,7 +220,11 @@ class ControllerCatalogSimplePars extends Controller
                                         $err = $info . $e->getMessage();
                                         $this->ocLog('simple_pars_add_cats_error_log', $err, true);
                                     }
-                                    //usleep($usleep);
+                                    
+                                    if(isset($usleep) and !empty($usleep)){
+                                        usleep($usleep);
+                                    }
+                                    
                                     $prod_html = phpQuery::newDocument($prod_file);
     
                                     $prod_WhatFind = $prod_html->find($product_name);
