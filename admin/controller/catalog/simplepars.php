@@ -702,7 +702,13 @@ class ControllerCatalogSimplePars extends Controller
         }
         $data["mpage"] = $this->mPage();
         $data["params"] = $this->model_catalog_simplepars->getParsParam($data["dn_id"]);
+        
         $data["setup"] = $this->model_catalog_simplepars->getPrsetupToPage($data["dn_id"]);
+        
+        //Получим настройки категорий
+        $data["cats_settings"] = $this->model_catalog_simplepars->getCatsSettings($data["dn_id"]);
+        //Получим настройки категорий КОНЕЦ
+        
         $data["setting"] = $this->model_catalog_simplepars->getSettingToProduct($data["dn_id"]);
         $data["manufs"] = $this->model_catalog_simplepars->getManufs();
         $data["categorys"] = $this->model_catalog_simplepars->madeCatTree(1);

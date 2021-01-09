@@ -82,7 +82,7 @@ public function DnAdd($data){
 			`dn_name` ='".$this->db->escape($data)."',
 			`vers_op`='".$this->db->escape($engine)."'");
 		$dn_id = $this->db->getLastId();
-
+		
 		#Создаем таблицу Prsetup
 		$this->createDbPrsetup($dn_id);
 		#Создаем таблицу браузера
@@ -102,6 +102,22 @@ public function DnAdd($data){
 			}
 
 		}
+		
+		//Добавим $dn_id в настройки категорий
+		$this->db->query("INSERT INTO `". DB_PREFIX ."pars_cats_settings` SET
+			`dn_id`='$dn_id',
+			`clear_domain`='https://eko-bike.ru',
+			`usleep`='0',
+			`sub_categories_a`='.menu_tags .menu_hide a',
+			`cat_link_end`='page-all',
+			`sub_categories_button`='.menu_tags .menu_hide button',
+			`product_a`='#fn_products_content a.product_preview__name_link',
+			`product_name`='h1.block__heading > span',
+			`product_h4`='h4',
+			`is_top`='0',
+			`is_tag`='0'");
+		//Добавим $dn_id в настройки категорий КОНЕЦ
+		
 	}else{
 		$this->session->data['error'] = 'Не задано имя проекта';
 	}
@@ -1257,10 +1273,17 @@ public function GetParamsetup($dn_id){
 		}
 	}
 	
-	
-	
 	public function UpdateProductCategories($product_id, $category_id){
 		$this->db->query("INSERT INTO `". DB_PREFIX ."product_to_category` SET `product_id`='$product_id', `category_id`='$category_id', `main_category`='0'");
+	}
+	
+	public function getCatsSettings($dn_id){
+		$query = $this->db->query("SELECT * FROM `". DB_PREFIX ."pars_cats_settings` WHERE `dn_id`='$dn_id'");
+		if( $query->num_rows > 0 ){
+			return $query->row;
+		}else{
+			return false;
+		}
 	}
 	
 //Ostap parser END
@@ -2316,7 +2339,20 @@ public function savePrsetup($data, $dn_id){
 	  #$this->wtfarrey($data);
   //настройки браузера.
   $this->db->query("UPDATE `".DB_PREFIX."pars_browser` SET cache_page = ".(int)$data['cache_page']." WHERE dn_id =".(int)$dn_id);
-
+	
+	//Сохранение настройки сборщика категорий
+	$this->db->query("UPDATE `". DB_PREFIX ."pars_cats_settings` SET
+  	`clear_domain`='".$this->db->escape($data['clear_domain'])."',
+  	`usleep`='".(int)$data['usleep']."',
+  	`sub_categories_a`='".$this->db->escape($data['sub_categories_a'])."',
+  	`cat_link_end`='".$this->db->escape($data['cat_link_end'])."',
+  	`sub_categories_button`='".$this->db->escape($data['sub_categories_button'])."',
+  	`product_a`='".$this->db->escape($data['product_a'])."',
+  	`product_name`='".$this->db->escape($data['product_name'])."',
+  	`product_h4`='".$this->db->escape($data['product_h4'])."',
+  	`is_top`='".(isset($data['is_top']) ? (int)$data['is_top'] : 0)."',
+  	`is_tag`='".(isset($data['is_tag']) ? (int)$data['is_tag'] : 0)."'
+  	WHERE `dn_id`=".(int)$dn_id);
 }
 
 //Получение параметров парсинга для выбора.

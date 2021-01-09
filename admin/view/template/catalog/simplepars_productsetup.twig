@@ -1412,7 +1412,7 @@
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Адрес сайта донора без слеша в конце:</label>
                       <div class="col-sm-8">
-                        <input name="clear_domain" id="clear_domain" type="text" value="" id="input-pr" class="form-control">
+                        <input name="clear_domain" id="clear_domain" type="text" value="{{ cats_settings['clear_domain'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
@@ -1421,15 +1421,15 @@
                         <span data-toggle="tooltip" data-original-title="10000 = 0.1 секнды. Если не указано то паузы не будет"></span>
                       </label>
                       <div class="col-sm-2">
-                        <input name="usleep" id="usleep" type="text" value="" id="input-pr" class="form-control">
+                        <input name="usleep" id="usleep" type="text" value="{{ cats_settings['usleep'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
-                    <legend>phpQuery Селекторы:</legend>
+                    <legend>phpQuery Селекторы (аналог jQuery):</legend>
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Селектор ссылки подкатегории:</label>
                       <div class="col-sm-8">
-                        <input name="sub_categories_a" id="sub_categories_a" type="text" value="" id="input-pr" class="form-control">
+                        <input name="sub_categories_a" id="sub_categories_a" type="text" value="{{ cats_settings['sub_categories_a'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
@@ -1438,7 +1438,7 @@
                         <span data-toggle="tooltip" data-original-title="Будет подставлено в конец ссылки категории для получения страницы со всеми товарами"></span>
                       </label>
                       <div class="col-sm-8">
-                        <input name="cat_link_end" id="cat_link_end" type="text" value="" id="input-pr" class="form-control">
+                        <input name="cat_link_end" id="cat_link_end" type="text" value="{{ cats_settings['cat_link_end'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
@@ -1447,42 +1447,42 @@
                         <span data-toggle="tooltip" data-original-title="Если не указано то категории кнопки не будут собиратся"></span>
                       </label>
                       <div class="col-sm-8">
-                        <input name="sub_categories_button" id="sub_categories_button" type="text" value="" id="input-pr" class="form-control">
+                        <input name="sub_categories_button" id="sub_categories_button" type="text" value="{{ cats_settings['sub_categories_button'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Селектор ссылки на товар:</label>
                       <div class="col-sm-8">
-                        <input name="product_a" id="product_a" type="text" value="" id="input-pr" class="form-control">
+                        <input name="product_a" id="product_a" type="text" value="{{ cats_settings['product_a'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Селектор названия товара на странице товара:</label>
                       <div class="col-sm-8">
-                        <input name="product_name" id="product_name" type="text" value="" id="input-pr" class="form-control">
+                        <input name="product_name" id="product_name" type="text" value="{{ cats_settings['product_name'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Селектор (тег) в который заключено название товара внутри ссылки на странице категории:</label>
                       <div class="col-sm-8">
-                        <input name="product_h4" id="product_h4" type="text" value="" id="input-pr" class="form-control">
+                        <input name="product_h4" id="product_h4" type="text" value="{{ cats_settings['product_h4'] }}" id="input-pr" class="form-control">
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Добавлять собранные категории в верхнее меню:</label>
                       <div class="col-sm-8">
-                        <input name="is_top" id="is_top" type="checkbox" value="" id="input-pr" class="form-control">
+                        <input name="is_top" id="is_top" type="checkbox" value="1" id="input-pr" class="form-control" {% if (cats_settings['is_top']) %}checked{% endif %}>
                       </div>
                     </div>
 
                     <div class="form-group">
                       <label class="col-sm-2 control-label" for="input-pr">Сделать собранные категории тегами:</label>
                       <div class="col-sm-8">
-                        <input name="is_tag" id="is_tag" type="checkbox" value="" id="input-pr" class="form-control">
+                        <input name="is_tag" id="is_tag" type="checkbox" value="1" id="input-pr" class="form-control" {% if (cats_settings['is_tag']) %}checked{% endif %}>
                       </div>
                     </div>
 
