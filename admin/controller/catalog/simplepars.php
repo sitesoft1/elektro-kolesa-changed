@@ -47,6 +47,30 @@ class ControllerCatalogSimplePars extends Controller
             $clear_domain = $cats_settings['clear_domain'];
             $domain = $clear_domain . '/';
             
+            $parent_menu_category = "header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name";
+            //начнем парсинг
+            try {
+                $file = file_get_contents('https://eko-bike.ru/elektrovelosipedyi/');
+            }
+            catch(Exception $e){
+                $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                $err = $info . $e->getMessage();
+                $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+            }
+    
+            $html = phpQuery::newDocument($file);
+            //find all pagination hrefs
+            
+            $WhatFind = $html->find($parent_menu_category)->parent()->parent()->find('a');
+            //dump($WhatFind);
+            foreach ($WhatFind as $element) {
+                $pq = pq($element); // pq() - Это аналог $ в jQuery
+                $href = $pq->attr('href');
+                $text = $pq->text();
+            }
+            
+            
+            
             $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды.
             $sub_categories_a = $cats_settings['sub_categories_a'];
             $cat_link_end = $cats_settings['cat_link_end'];
@@ -84,7 +108,7 @@ class ControllerCatalogSimplePars extends Controller
     
                 //find all pagination hrefs
                 $SubCategoriesLinks = [];
-                $WhatFind = $html->find($sub_categories_a);
+                $WhatFind = $html->find($parent_menu_category)->parent()->parent()->find('a');
                 foreach ($WhatFind as $element) {
                     $pq = pq($element); // pq() - Это аналог $ в jQuery
                     $href = $pq->attr('href');
@@ -95,7 +119,8 @@ class ControllerCatalogSimplePars extends Controller
                         );
                     }
                 }
-    
+                
+                /*
                 if(isset($sub_categories_button) and !empty($sub_categories_button)){
                     //find all pagination buttons
                     $WhatFind = $html->find($sub_categories_button);
@@ -110,6 +135,7 @@ class ControllerCatalogSimplePars extends Controller
                         }
                     }
                 }
+                */
                 
                 foreach($SubCategoriesLinks as $SubCategory) {
                     $category_name = $SubCategory['name'];
