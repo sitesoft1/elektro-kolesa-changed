@@ -48,29 +48,6 @@ class ControllerCatalogSimplePars extends Controller
             $domain = $clear_domain . '/';
             
             $parent_menu_category = "header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name";
-            //начнем парсинг
-            try {
-                $file = file_get_contents('https://eko-bike.ru/elektrovelosipedyi/');
-            }
-            catch(Exception $e){
-                $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
-                $err = $info . $e->getMessage();
-                $this->ocLog('simple_pars_add_cats_error_log', $err, true);
-            }
-    
-            $html = phpQuery::newDocument($file);
-            //find all pagination hrefs
-            
-            $WhatFind = $html->find($parent_menu_category)->parent()->parent()->find('a');
-            //dump($WhatFind);
-            foreach ($WhatFind as $element) {
-                $pq = pq($element); // pq() - Это аналог $ в jQuery
-                $href = $pq->attr('href');
-                $text = $pq->text();
-            }
-            
-            
-            
             $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды.
             $sub_categories_a = $cats_settings['sub_categories_a'];
             $cat_link_end = $cats_settings['cat_link_end'];
@@ -81,7 +58,8 @@ class ControllerCatalogSimplePars extends Controller
             $is_top = $cats_settings['is_top'];
             $is_tag = $cats_settings['is_tag'];
             
-            $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
+            //$start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
+            $start_link = 'https://eko-bike.ru/elektrovelosipedyi/';
             show("Сбор категорий по ссылке: ".$start_link);
             $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
             
@@ -105,7 +83,6 @@ class ControllerCatalogSimplePars extends Controller
                 
                 
                 $html = phpQuery::newDocument($file);
-    
                 //find all pagination hrefs
                 $SubCategoriesLinks = [];
                 $WhatFind = $html->find($parent_menu_category)->parent()->parent()->find('a');
@@ -196,7 +173,7 @@ class ControllerCatalogSimplePars extends Controller
                 foreach ($pars_categories as $pars_category){
                     //if($cnt>2){die();}//zakomentit
                     //if($cnt>2){break;}//zakomentit
-                    //начнем парсинг
+                    //начнем парсинг товаров
                     $cat_link = $pars_category['cat_link'].$cat_link_end;
     
                     try {
