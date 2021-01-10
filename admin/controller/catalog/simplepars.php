@@ -139,11 +139,7 @@ class ControllerCatalogSimplePars extends Controller
                     $category_link = $SubCategory['href'];
                     $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
                     if($category_id){
-                        $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
-                        if(!$pars_cat_id){
-                            //если категория есть заполняем таблицу
-                            $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
-                        }
+                       $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
                     }
                     else{
                         //если категории нет сперва добавим ее а потом заполним таблицу
@@ -174,10 +170,7 @@ class ControllerCatalogSimplePars extends Controller
                         $category_id = $this->model_catalog_category->addCategory($category_data);
             
                         if($category_id){
-                            $pars_cat_id = $this->model_catalog_simplepars->GetParsCat($dn_id, $cat_d, $category_id);
-                            if(!$pars_cat_id){
-                                $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
-                            }
+                            $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
                         }
             
                     }

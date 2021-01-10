@@ -1220,6 +1220,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $cat_link){
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "pars_cats` WHERE `dn_id` = '" . (int)$dn_id . "' AND `parent_cat_id` = '" . (int)$cat_d . "' AND `cat_id` = '" . (int)$category_id . "'");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "pars_cats` SET `dn_id` = '" . (int)$dn_id . "', `parent_cat_id` = '" . (int)$cat_d . "', `cat_id` = '" . (int)$category_id . "', `cat_name` = '" . (string) $this->db->escape($category_name) . "', `cat_link` = '" . (string) $this->db->escape($cat_link) . "'");
 		$category_id = $this->db->getLastId();
 		return $category_id;
