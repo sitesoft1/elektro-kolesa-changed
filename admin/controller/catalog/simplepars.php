@@ -74,7 +74,7 @@ class ControllerCatalogSimplePars extends Controller
                 
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
                 
-                //начнем парсинг.
+                //начнем парсинг
                 try {
                     $file = file_get_contents($start_link);
                 }
@@ -96,10 +96,23 @@ class ControllerCatalogSimplePars extends Controller
                 foreach ($WhatFind as $element) {
                     $pq = pq($element); // pq() - Это аналог $ в jQuery
                     $href = $pq->attr('href');
-                    if(!empty($href)){
+                    if(!empty($href) and strlen($href)>1){
                         $SubCategoriesLinks[] = array(
                             'name' => trim($pq->text()),
                             'href' => $domain.$href
+                        );
+                    }
+                }
+    
+                //find all pagination hrefs
+                $WhatFind = $html->find($parent_menu_category)->parent()->parent()->find('.menu_group__item--3 button');
+                foreach ($WhatFind as $element) {
+                    $pq = pq($element); // pq() - Это аналог $ в jQuery
+                    $href = $pq->attr('value');
+                    if(!empty($href) and strlen($href)>21){
+                        $SubCategoriesLinks[] = array(
+                            'name' => trim($pq->text()),
+                            'href' => $href
                         );
                     }
                 }
