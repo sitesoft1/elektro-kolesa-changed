@@ -1286,7 +1286,7 @@ public function GetParamsetup($dn_id){
 		}
 	}
 	
-//Ostap parser END
+//Ostap parser END.
 
 #Получение параметра который редактируем
 public function getActivParam($data){
