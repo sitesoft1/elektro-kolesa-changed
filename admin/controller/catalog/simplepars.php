@@ -66,7 +66,8 @@ class ControllerCatalogSimplePars extends Controller
             $is_tag = $cats_settings['is_tag'];
             
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
-            show("Сбор категорий по ссылке: ".$start_link);
+            $start_link = str_replace('page-all', '', $start_link);
+                show("Сбор категорий по ссылке: ".$start_link);
             $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
             
             if(!empty($start_link) and strstr($start_link, $clear_domain)){
