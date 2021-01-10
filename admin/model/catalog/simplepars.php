@@ -1211,7 +1211,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetCategoryByName($cat_d, $category_name){
-		$query = $this->db->query("SELECT `category_id` FROM `". DB_PREFIX ."category_description` WHERE `category_id` IN(SELECT `category_id` FROM `". DB_PREFIX ."category_path` WHERE path_id='$cat_d' AND `category_id`<>'$cat_d') AND `language_id`='1' AND `name`='$category_name'");
+		$query = $this->db->query("SELECT `category_id` FROM `". DB_PREFIX ."category_description` WHERE `category_id` IN(SELECT `category_id` FROM `". DB_PREFIX ."category_path` WHERE path_id='$cat_d' AND `category_id`<>'$cat_d') AND `language_id`='1' AND `name`='".$this->db->escape($category_name)."'");
 		if($query->num_rows > 0 and isset($query->row['category_id'])){
 			return $query->row['category_id'];
 		}else{
@@ -1220,7 +1220,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $cat_link){
-		$this->db->query("INSERT INTO `" . DB_PREFIX . "pars_cats` SET `dn_id` = '" . (int)$dn_id . "', `parent_cat_id` = '" . (int)$cat_d . "', `cat_id` = '" . (int)$category_id . "', `cat_name` = '" . (string)$category_name . "', `cat_link` = '" . (string)$cat_link . "'");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "pars_cats` SET `dn_id` = '" . (int)$dn_id . "', `parent_cat_id` = '" . (int)$cat_d . "', `cat_id` = '" . (int)$category_id . "', `cat_name` = '" . (string) $this->db->escape($category_name) . "', `cat_link` = '" . (string) $this->db->escape($cat_link) . "'");
 		$category_id = $this->db->getLastId();
 		return $category_id;
 	}
@@ -1244,7 +1244,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetProductId($dn_id, $name, $category_id){
-		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='$name'");
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='" . $this->db->escape($name) . "'");
 		if( $query->num_rows > 0 ){
 			return $query->row['product_id'];
 		}else{
@@ -1253,7 +1253,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetLikeProductId($dn_id, $name, $category_id){
-		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name` LIKE '".$name."%'");
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name` LIKE '".$this->db->escape($name)."%'");
 		if( $query->num_rows > 0 ){
 		return $query->row['product_id'];
 		}else{
@@ -1273,6 +1273,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function UpdateProductCategories($product_id, $category_id){
+        $this->db->query("DELETE FROM `". DB_PREFIX ."product_to_category` WHERE `product_id`='$product_id' AND `category_id`='$category_id'");
 		$this->db->query("INSERT INTO `". DB_PREFIX ."product_to_category` SET `product_id`='$product_id', `category_id`='$category_id', `main_category`='0'");
 	}
 	
