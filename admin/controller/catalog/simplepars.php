@@ -74,7 +74,7 @@ class ControllerCatalogSimplePars extends Controller
                 
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
                 
-                //начнем парсинг
+                //начнем парсинг.
                 try {
                     $file = file_get_contents($start_link);
                 }
