@@ -1,9 +1,4 @@
 <?php
-set_time_limit(0);//snimaem ogranicheniya na vipolneniya skripta
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-
 function dump($data)
 {
     echo '<pre>'.PHP_EOL;
@@ -108,28 +103,12 @@ function createPrice($offer_price, $xml_rate, $xml_markup)
 
 function shutdown()
 {
-    echo 'Выполнили функцию shutdown!';
-    //file_put_contents('/public_html/_xml/var/shutdown_log.txt', 'Выполнили функцию shutdown!', FILE_APPEND);
-    file_put_contents(LOG_DIR . '/shutdown_log.txt', 'Выполнили функцию shutdown!'.PHP_EOL, FILE_APPEND);
-    $err_arr = error_get_last();
-    $err = 'type - '.$err_arr['type'] . ' | message - '. $err_arr['message'] . ' | file - '.$err_arr['file']. ' | line - '.$err_arr['line'];
-    //global $offer_cnt;
-    global $offer_name;
-    global $offer_id;
-    global $offer_available;
-    global $product_id;
-    $msg = $product_id.' | '.$offer_id.' | '.$offer_name.' | '.$offer_available;
     $time = date('H-i-s');
-    $msg = $time.' | '.$msg;
-    echo $msg;
-    echo $err;
-    //antre
-    //file_put_contents('/public_html/_xml/var/shutdown_log.txt', $msg.PHP_EOL, FILE_APPEND);
-    //file_put_contents('/public_html/_xml/var/shutdown_log.txt', $err, FILE_APPEND);
-    //birka
-    file_put_contents(LOG_DIR . '/shutdown_log.txt', $msg.PHP_EOL, FILE_APPEND);
-    file_put_contents(LOG_DIR . '/shutdown_log.txt', $err, FILE_APPEND);
-    
+    $stop = microtime(true) - START_TIME;
+    file_put_contents(DIR_LOGS . 'shutdown_log.txt', 'Выполнили функцию shutdown!'.PHP_EOL, FILE_APPEND);
+    $mem = 'Скушано памяти: ' . (memory_get_usage() - START_MEMORY) . ' байт';
+    file_put_contents(DIR_LOGS . 'shutdown_log.txt', $mem.PHP_EOL, FILE_APPEND);
+    file_put_contents(DIR_LOGS . 'test_time_stop_log.txt', $time . '|' . $stop.PHP_EOL, FILE_APPEND);
 }
 
 function shutdown_time()

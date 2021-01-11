@@ -107,7 +107,7 @@ public function DnAdd($data){
 		$this->db->query("INSERT INTO `". DB_PREFIX ."pars_cats_settings` SET
 			`dn_id`='$dn_id',
 			`clear_domain`='https://eko-bike.ru',
-			`usleep`='0',
+			`usleep`='10000',
 			`sub_categories_a`='header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name',
 			`cat_link_end`='page-all',
 			`product_a`='#fn_products_content a.product_preview__name_link',
@@ -2360,7 +2360,7 @@ public function savePrsetup($data, $dn_id){
 		$this->db->query("INSERT INTO `". DB_PREFIX ."pars_cats_settings` SET
 			`dn_id`='$dn_id',
 			`clear_domain`='https://eko-bike.ru',
-			`usleep`='0',
+			`usleep`='10000',
 			`sub_categories_a`='header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name',
 			`cat_link_end`='page-all',
 			`product_a`='#fn_products_content a.product_preview__name_link',
