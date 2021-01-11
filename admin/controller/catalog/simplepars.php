@@ -170,6 +170,9 @@ class ControllerCatalogSimplePars extends Controller
                     
                 }
                 
+               // dump($SubCategoriesLinks);
+                //$this->ocLog('SubCategoriesLinks', $SubCategoriesLinks, false);
+                //die();
               
                 foreach($SubCategoriesLinks as $SubCategory) {
                     $category_name = $SubCategory['name'];
