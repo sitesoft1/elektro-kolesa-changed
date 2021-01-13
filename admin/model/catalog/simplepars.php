@@ -1200,6 +1200,30 @@ public function GetParamsetup($dn_id){
 }
 
 //Ostap parser
+	
+	public function GetAdminEmails(){
+		$query = $this->db->query("SELECT `email` FROM `". DB_PREFIX ."user` WHERE `user_group_id`='1'");
+		if($query->num_rows > 0){
+			return $query->rows;
+		}else{
+			return false;
+		}
+	}
+
+	public function DeleteParsLogs(){
+		$files = glob(DIR_LOGS."*_log.txt");
+		
+		var_dump($files);
+		
+		foreach($files as $file){
+			unlink($file);
+		}
+	}
+
+	public function DeleteAllParsCats($dn_id){
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "pars_cats` WHERE `dn_id` = '" . (int)$dn_id . "'");
+	}
+	
 	public function GetStartLink($dn_id){
 		$data_setting = $this->db->query("SELECT `start_link` FROM `". DB_PREFIX ."pars_setting` WHERE dn_id=".(int)$dn_id);
 		return $data_setting->row['start_link'];
@@ -1245,7 +1269,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetProductId($dn_id, $name, $category_id){
-		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='" . $this->db->escape($name) . "'");
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name`='" . $this->db->escape($name) . "' LIMIT 1");
 		if( $query->num_rows > 0 ){
 			return $query->row['product_id'];
 		}else{
@@ -1254,7 +1278,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetLikeProductId($dn_id, $name, $category_id){
-		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name` LIKE '".$this->db->escape($name)."%'");
+		$query = $this->db->query("SELECT `product_id` FROM `". DB_PREFIX ."product_description` WHERE `product_id` IN(SELECT `product_id` FROM `". DB_PREFIX ."product` WHERE `dn_id`='$dn_id' AND `product_id` NOT IN(SELECT `product_id` FROM `". DB_PREFIX ."product_to_category` WHERE `category_id`='$category_id')) AND `language_id`='1' AND `name` LIKE '".$this->db->escape($name)."%' LIMIT 1");
 		if( $query->num_rows > 0 ){
 		return $query->row['product_id'];
 		}else{

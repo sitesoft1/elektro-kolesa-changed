@@ -100,7 +100,7 @@ function createPrice($offer_price, $xml_rate, $xml_markup)
     return $rezult;
 }
 
-
+/*
 function shutdown()
 {
     $time = date('H-i-s');
@@ -108,7 +108,7 @@ function shutdown()
     file_put_contents(DIR_LOGS . 'shutdown_log.txt', 'Выполнили функцию shutdown!'.PHP_EOL, FILE_APPEND);
     $mem = 'Скушано памяти: ' . (memory_get_usage() - START_MEMORY) . ' байт';
     file_put_contents(DIR_LOGS . 'shutdown_log.txt', $mem.PHP_EOL, FILE_APPEND);
-    file_put_contents(DIR_LOGS . 'test_time_stop_log.txt', $time . '|' . $stop.PHP_EOL, FILE_APPEND);
+    file_put_contents(DIR_LOGS . 'time_stop_log.txt', $time . '|' . $stop.PHP_EOL, FILE_APPEND);
 }
 
 function shutdown_time()
@@ -164,7 +164,7 @@ function sig_handler($signo)
     file_put_contents(LOG_DIR . '/sig_handler_log.txt', $err, FILE_APPEND);
     exit;
 }
-
+*/
 
 function addCategory($data) {
     $this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', noindex = '" . (int)$data['noindex'] . "', date_modified = NOW(), date_added = NOW(), `is_tag` = '" . (isset($data['is_tag']) ? (int)$data['is_tag'] : 0) . "'");

@@ -11,7 +11,7 @@ define('START_MEMORY', $memory);
 $start = microtime(true);
 define('START_TIME', $start);
 //Тест времени работы скрипта
-register_shutdown_function('shutdown');
+//register_shutdown_function('shutdown');
 class ControllerCatalogSimplePars extends Controller
 {
     private $error = array();
@@ -52,7 +52,10 @@ class ControllerCatalogSimplePars extends Controller
             //Тест времени работы скрипта КОНЕЦ
             
             $dn_id = $this->request->get["add_cats"];
-            $cats_settings = $this->model_catalog_simplepars->getCatsSettings($dn_id);
+            if($dn_id){
+                $this->model_catalog_simplepars->DeleteParsLogs();
+                $cats_settings = $this->model_catalog_simplepars->getCatsSettings($dn_id);
+            }
             
             //зададим необходимые переменные
             $clear_domain = $cats_settings['clear_domain'];
@@ -82,6 +85,7 @@ class ControllerCatalogSimplePars extends Controller
             if(!empty($start_link) and strstr($start_link, $clear_domain)){
                 
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
+                
                 
                 //начнем парсинг
                 try {
@@ -170,9 +174,13 @@ class ControllerCatalogSimplePars extends Controller
                     
                 }
                 
-               // dump($SubCategoriesLinks);
-                //$this->ocLog('SubCategoriesLinks', $SubCategoriesLinks, false);
+                //dump($SubCategoriesLinks);
+                $this->ocLog('SubCategoriesLinks', $SubCategoriesLinks, false);
                 //die();
+    
+                if(!empty($SubCategoriesLinks)){
+                    $this->model_catalog_simplepars->DeleteAllParsCats($dn_id);
+                }
               
                 foreach($SubCategoriesLinks as $SubCategory) {
                     $category_name = $SubCategory['name'];
@@ -181,7 +189,6 @@ class ControllerCatalogSimplePars extends Controller
                     $category_id = $this->model_catalog_simplepars->GetCategoryByName($cat_d, $category_name);
                     if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                     if($category_id){
-                       
                        $pars_cat_id = $this->model_catalog_simplepars->AddToParsCats($dn_id, $cat_d, $category_id, $category_name, $category_link);
                         if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                     }
@@ -258,28 +265,24 @@ class ControllerCatalogSimplePars extends Controller
                         $name = $pq_h4->text();
                         
                         if(!empty($name)){
-                            
                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
                             if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                             if($product_id){
-                                
                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
                                 if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                show("Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']);
-                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id'], true);
+                                show("Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $category_name");
+                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $category_name", true);
                                 $up_produtcs[] = $product_id;
                                 $this->ocLog('update_product_categories_log', $product_id, true);
                             }
                             else{
-    
-                                
                                 $like_product_id = $this->model_catalog_simplepars->GetLikeProductId($dn_id, $name, $pars_category['cat_id']);
                                 if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                                 if($like_product_id){
                                     //если товар не найден по короткому заголовку поищем его по полному
                                     try {
                                         if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                        $prod_file = file_get_contents($domain.$href);
+                                        $prod_file = file_get_contents($clear_domain.$href);
                                     }
                                     catch(Exception $e){
                                         $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
@@ -294,15 +297,13 @@ class ControllerCatalogSimplePars extends Controller
                                         $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
                                         $prod_name = $prod_pq->text();
                                         if(!empty($prod_name)){
-                                            
                                             $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $prod_name, $pars_category['cat_id']);
                                             if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                                             if($product_id){
-                                                
                                                 $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
                                                 if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                                show("Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']);
-                                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id'], true);
+                                                show("Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $category_name");
+                                                $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $category_name", true);
                                                 $up_produtcs[] = $product_id;
                                                 $this->ocLog('update_product_categories_log', $product_id, true);
                                             }
@@ -321,7 +322,7 @@ class ControllerCatalogSimplePars extends Controller
         
                     $cnt++;
                     //Запуск сборщика мусора для очистки памяти
-                    //time_nanosleep(0, 1000000); gc_collect_cycles();
+                    usleep(50000); gc_collect_cycles();
                 }
                 
                
@@ -362,7 +363,11 @@ class ControllerCatalogSimplePars extends Controller
             }
             
             if(isset($count_excluded_products) and isset($count_all_products)){
-                die("<strong> Обновлено товаров: $count_up_products </strong><br><strong>Пропущено товаров без дочерних категорий: $count_excluded_products </strong><br><strong>Всего товаров пройдено скриптом: $count_all_products </strong>");
+                $admin_emails = $this->model_catalog_simplepars->GetAdminEmails();
+                foreach ($admin_emails as $admin_email){
+                    mail($admin_email['email'], "Сбор категорий simplepars проэкта $dn_id закончен!", "Обновлено товаров: $count_up_products " . PHP_EOL . "Пропущено товаров без дочерних категорий: $count_excluded_products " . PHP_EOL . "Всего товаров пройдено скриптом: $count_all_products " . PHP_EOL . "Лог файл: https://elektro-kolesa.ru/storage/logs/update_product_categories_log");
+                }
+                die("<strong> Обновлено товаров: $count_up_products </strong><br><strong>Пропущено товаров без дочерних категорий: $count_excluded_products </strong><br><strong>Всего товаров пройдено скриптом: $count_all_products </strong><br><a target='_blank' href='https://elektro-kolesa.ru/storage/logs/update_product_categories_log'>Лог файл</a>");
             }else{
                 die("<strong> Обновлено товаров: $count_up_products </strong>");
             }
