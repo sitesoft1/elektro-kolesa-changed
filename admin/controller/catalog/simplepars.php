@@ -41,6 +41,19 @@ class ControllerCatalogSimplePars extends Controller
         }
     
 //OSTAP CODE ####################################################################################
+    
+        if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["get_exclude_prods"])) {
+            $dn_id = $this->request->get["get_exclude_prods"];
+            $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
+            $this->ocLog('excluded_products_log', $excluded_products, false);
+            if($excluded_products){
+                $count_excluded_products = count($excluded_products);
+                echo $count_excluded_products;
+            }else{
+                echo 'false';
+            }
+            die();
+        }
         
         //Сбор товаров определенной категории
         if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["get_prods"])) {
@@ -82,7 +95,19 @@ class ControllerCatalogSimplePars extends Controller
                 foreach ($pars_categories as $pars_category){
                     
                     //работаем
-                    $up_produtcs = array();
+                    if(file_exists(DIR_LOGS.'up_produtcs_arr.txt')){
+                        $up_produtcs_str = @file_get_contents(DIR_LOGS.'up_produtcs_arr.txt');
+                        if(isset($up_produtcs_str) and !empty($up_produtcs_str)){
+                            $up_produtcs = json_decode($up_produtcs_str);
+                        }
+                    }else{
+                        $up_produtcs = array();
+                    }
+                    
+                    if(!$up_produtcs or !is_array($up_produtcs)){
+                        $up_produtcs = array();
+                    }
+                    
                     $cat_link = $pars_category['cat_link'].$cat_link_end;
                     $cat_name = $pars_category['cat_name'];
                     
@@ -151,6 +176,7 @@ class ControllerCatalogSimplePars extends Controller
                         $this->model_catalog_simplepars->DeleteFromParsCats($dn_id, $cat_d, $pars_category['cat_id']);
             
                         $up_produtcs = array_unique($up_produtcs);
+                        file_put_contents(DIR_LOGS.'up_produtcs_arr.txt', json_encode($up_produtcs));
                         $count_up_products = count($up_produtcs);
             
                         //Запишем в лог данные об обновленных товарах
@@ -160,9 +186,12 @@ class ControllerCatalogSimplePars extends Controller
                         $this->ocLog('update_product_categories_log', "Обновлено товаров: ".$count_up_products, true);
             
                         if(!empty($up_produtcs) and $count_up_products>0){
-                            echo json_encode($up_produtcs);
+                            echo $count_up_products;
+                            //echo json_encode($up_produtcs);
+                            //var_dump($up_produtcs);
                         }else{
-                            echo json_encode(array());
+                            echo 0;
+                            //echo json_encode(array());
                         }
             
                     }

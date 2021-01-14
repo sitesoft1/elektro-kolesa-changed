@@ -71,7 +71,6 @@
                 <td style="width: 1px;" class="text-center"></td>
                 <td class="">Проект</td>
                 <td class="text-right">Действие</td>
-                <td class="text-right">Добавить категории</td>
               </tr>
               </thead>
               <tbody>
@@ -88,10 +87,7 @@
                   <a href="{{ link_dn~dn['dn_id']}}" data-toggle="tooltip" class="btn btn-primary" data-original-title="Редактировать">
                     <i class="fa fa-pencil" aria-hidden="true"></i></a>
                 </td>
-                <td class="text-right">
-                  <a onclick="get_cats({{ dn['dn_id'] }})" data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                  <!--<a target="_blank" href="index.php?route=catalog/simplepars&add_cats={{ dn['dn_id'] }}&{{ adap.token }} " data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>-->
-                </td>
+
               </tr>
               {% endfor %}
               {% endif %}
@@ -103,16 +99,6 @@
     </form>
   </div>
 
-<script>
-  function get_cats(add_cats) {
-    $.ajax({
-      url: 'index.php?route=catalog/simplepars&add_cats='+add_cats+'&{{ adap.token }}',
-      success: function(cats){
-        console.log(cats);
-      }
-    });
 
-  }
-</script>
 {{ footer }} 
 </div>

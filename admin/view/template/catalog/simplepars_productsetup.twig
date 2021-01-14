@@ -2082,39 +2082,90 @@
 
     //ostap code
     $("#get_categories").bind("click", function () {
-
+      localStorage.setItem('up_produtcs_all', 0);
+      var up_produtcs = '';
+      var cats = '';
 
       $.ajax({
         url: "index.php?route=catalog/simplepars&add_cats={{ dn_id}}&{{ adap['token']}}",
         success: function(data){
-          //console.log(data);
+          console.log(data);
           cats = $.parseJSON(data);
           //console.log(cats);
-          console.log(cats.length);
+          //console.log(cats.length);
+          localStorage.setItem('cats_cnt', cats.length);
+          localStorage.setItem('start_cats_cnt', cats.length);
           if(cats.length>0){
             getProductsByCategory();
           }
         }
       });
-
-
+      $("#progress").show();
     });
 
     function getProductsByCategory(){
+      //console.log('getProductsByCategory');
       $.ajax({
-        url: "index.php?route=catalog/simplepars&get_prods={{ dn_id}}&{{ adap['token']}}",
+        url: "index.php?route=catalog/simplepars&get_prods=28&{{ adap['token']}}",
         success: function(data){
           console.log(data);
-          if(data != 'false'){
-            up_produtcs = $.parseJSON(data);
-            console.log(up_produtcs);
-            console.log(up_produtcs.length);
+          if(data !== 'false'){
+            up_produtcs = Number(data);
+            //up_produtcs = $.parseJSON(data);
+           // console.log(up_produtcs);
+            //console.log(up_produtcs.length);
+
+            up_produtcs_all = localStorage.getItem('up_produtcs_all');
+            up_produtcs_length = up_produtcs;
+            //up_produtcs_length = up_produtcs.length;
+            if(up_produtcs_length>0){
+              up_produtcs_all = Number(up_produtcs_all) + up_produtcs_length;
+              //up_produtcs_all = Number(up_produtcs_length);
+            }
+            localStorage.setItem('up_produtcs_all', up_produtcs_all);
+
+            cats_cnt = localStorage.getItem('cats_cnt');
+            start_cats_cnt = localStorage.getItem('start_cats_cnt');
+            up_cats_cnt = start_cats_cnt - cats_cnt;
+            if(up_cats_cnt == 0){
+              up_cats_cnt = 1;
+            }
+            localStorage.setItem('up_cats_cnt', up_cats_cnt);
+            $("#pross").css("width", ((start_cats_cnt - cats_cnt)/start_cats_cnt)*100 + "%");
+            $("#info_count").text("Пройдено категорий: " + up_cats_cnt + " | Обработано товаров: " + up_produtcs_all);
             getProductsByCategory();
+            cats_cnt = cats_cnt - 1;
+            localStorage.setItem('cats_cnt', cats_cnt);
+          }else{
+            localStorage.setItem('cats_cnt', 0);
+              GetExcludedProducts();
           }
 
         }
       });
 
+    }
+
+    function GetExcludedProducts(){
+      //console.log('GetExcludedProducts');
+      $.ajax({
+        url: "index.php?route=catalog/simplepars&get_exclude_prods={{ dn_id}}&{{ adap['token']}}",
+        success: function(exclude_prods){
+          //console.log(exclude_prods);
+          if(exclude_prods !== 'false'){
+            exclude_prods = Number(exclude_prods);
+            up_produtcs_all = localStorage.getItem('up_produtcs_all');
+            up_produtcs_all = Number(up_produtcs_all);
+            start_cats_cnt = localStorage.getItem('start_cats_cnt');
+            start_cats_cnt = Number(start_cats_cnt);
+            all_products = up_produtcs_all + exclude_prods;
+            $("#pross").css("width", "100" + "%");
+            $("#info_count").text("Обработка завершена. Обработано категорий: "+start_cats_cnt+" Обновлено товаров: " + up_produtcs_all + "Исключено товаров" + exclude_prods + "Всего обработано товаров: " + all_products);
+            $("#progress").hide();
+            alert("Обработка завершена. Обработано категорий: "+start_cats_cnt+" Обновлено товаров: " + up_produtcs_all + ", Исключено товаров" + exclude_prods + "Всего обработано товаров: " + all_products);
+          }
+        }
+      });
     }
     //ostap code END
 
