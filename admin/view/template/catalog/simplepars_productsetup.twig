@@ -2104,7 +2104,7 @@
     });
 
     function getProductsByCategory(){
-      //console.log('getProductsByCategory');
+      console.log('getProductsByCategory');
       $.ajax({
         url: "index.php?route=catalog/simplepars&get_prods=28&{{ adap['token']}}",
         success: function(data){
@@ -2147,7 +2147,7 @@
     }
 
     function GetExcludedProducts(){
-      //console.log('GetExcludedProducts');
+      console.log('GetExcludedProducts');
       $.ajax({
         url: "index.php?route=catalog/simplepars&get_exclude_prods={{ dn_id}}&{{ adap['token']}}",
         success: function(exclude_prods){
