@@ -100,7 +100,7 @@ function createPrice($offer_price, $xml_rate, $xml_markup)
     return $rezult;
 }
 
-/*
+
 function shutdown()
 {
     $time = date('H-i-s');
@@ -137,6 +137,7 @@ function sig_handler_time($signo)
     exit;
 }
 
+
 // обработчик сигнала
 function sig_handler($signo)
 {
@@ -147,24 +148,11 @@ function sig_handler($signo)
     file_put_contents(LOG_DIR . '/sig_handler_log.txt', $info.PHP_EOL, FILE_APPEND);
     $err_arr = error_get_last();
     $err = 'type - '.$err_arr['type'] . ' | message - '. $err_arr['message'] . ' | file - '.$err_arr['file']. ' | line - '.$err_arr['line'];
-    //global $offer_cnt;
-    global $offer_name;
-    global $offer_id;
-    global $offer_available;
-    global $product_id;
-    $time = date('H-i-s');
-    $msg = $time.' | '.$product_id.' | '.$offer_id.' | '.$offer_name.' | '.$offer_available;
-    echo $msg;
     echo $err;
-    //antre
-    //file_put_contents('/public_html/_xml/var/sig_handler_log.txt', $msg.PHP_EOL, FILE_APPEND);
-    //file_put_contents('/public_html/_xml/var/sig_handler_log.txt', $err, FILE_APPEND);
-    //birka
-    file_put_contents(LOG_DIR . '/sig_handler_log.txt', $msg.PHP_EOL, FILE_APPEND);
-    file_put_contents(LOG_DIR . '/sig_handler_log.txt', $err, FILE_APPEND);
+    file_put_contents(LOG_DIR . '/sig_handler_log.txt', $err.PHP_EOL);
     exit;
 }
-*/
+
 
 function addCategory($data) {
     $this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', noindex = '" . (int)$data['noindex'] . "', date_modified = NOW(), date_added = NOW(), `is_tag` = '" . (isset($data['is_tag']) ? (int)$data['is_tag'] : 0) . "'");

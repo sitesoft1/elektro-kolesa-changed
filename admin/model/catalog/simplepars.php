@@ -1200,7 +1200,6 @@ public function GetParamsetup($dn_id){
 }
 
 //Ostap parser
-	
 	public function GetAdminEmails(){
 		$query = $this->db->query("SELECT `email` FROM `". DB_PREFIX ."user` WHERE `user_group_id`='1'");
 		if($query->num_rows > 0){
@@ -1235,7 +1234,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetCategoryByName($cat_d, $category_name){
-		$query = $this->db->query("SELECT `category_id` FROM `". DB_PREFIX ."category_description` WHERE `category_id` IN(SELECT `category_id` FROM `". DB_PREFIX ."category_path` WHERE path_id='$cat_d' AND `category_id`<>'$cat_d') AND `language_id`='1' AND `name`='".$this->db->escape($category_name)."'");
+		$query = $this->db->query("SELECT `category_id` FROM `". DB_PREFIX ."category_description` WHERE `category_id` IN(SELECT `category_id` FROM `". DB_PREFIX ."category_path` WHERE path_id='$cat_d' AND `category_id`<>'$cat_d') AND `language_id`='1' AND `name`='".$this->db->escape($category_name)."' LIMIT 1");
 		if($query->num_rows > 0 and isset($query->row['category_id'])){
 			return $query->row['category_id'];
 		}else{
@@ -1251,7 +1250,7 @@ public function GetParamsetup($dn_id){
 	}
 	
 	public function GetParsCat($dn_id, $cat_d, $category_id){
-		$query = $this->db->query("SELECT `id` FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d' AND `cat_id`='$category_id'");
+		$query = $this->db->query("SELECT `id` FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d' AND `cat_id`='$category_id' LIMIT 1");
 		if( $query->num_rows > 0 and isset($query->row['id']) ){
 			return $query->row['id'];
 		}else{
@@ -1310,7 +1309,6 @@ public function GetParamsetup($dn_id){
 			return false;
 		}
 	}
-	
 //Ostap parser END.
 
 #Получение параметра который редактируем
