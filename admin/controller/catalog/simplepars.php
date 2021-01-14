@@ -90,18 +90,28 @@ class ControllerCatalogSimplePars extends Controller
             $start_link_href = str_replace($domain, '', $start_link);
             $parent_menu_category_a = 'header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > a[href="'.$start_link_href.'"]';
             
+            //var_dump($dn_id);
             $pars_categories = $this->model_catalog_simplepars->GetSingleParsCategory($dn_id, $cat_d);
+            
+            //var_dump($pars_categories);
+            
             if($pars_categories){
                 foreach ($pars_categories as $pars_category){
-                    
                     //работаем
-                    if(file_exists(DIR_LOGS.'up_produtcs_arr.txt')){
-                        $up_produtcs_str = @file_get_contents(DIR_LOGS.'up_produtcs_arr.txt');
-                        if(isset($up_produtcs_str) and !empty($up_produtcs_str)){
-                            $up_produtcs = json_decode($up_produtcs_str);
+                    try {
+                        if(file_exists(DIR_LOGS.'up_produtcs_arr.txt')){
+                            $up_produtcs_str = @file_get_contents(DIR_LOGS.'up_produtcs_arr.txt');
+                            if(isset($up_produtcs_str) and !empty($up_produtcs_str)){
+                                $up_produtcs = json_decode($up_produtcs_str);
+                            }
+                        }else{
+                            $up_produtcs = array();
                         }
-                    }else{
-                        $up_produtcs = array();
+                    }
+                    catch(Exception $e){
+                        $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                        $err = $info . $e->getMessage();
+                        $this->ocLog('simple_pars_add_cats_error_log', $err, true);
                     }
                     
                     if(!$up_produtcs or !is_array($up_produtcs)){

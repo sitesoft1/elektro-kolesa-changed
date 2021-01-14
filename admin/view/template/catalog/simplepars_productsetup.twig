@@ -2091,8 +2091,8 @@
         success: function(data){
           console.log(data);
           cats = $.parseJSON(data);
-          //console.log(cats);
-          //console.log(cats.length);
+          console.log(cats);
+          console.log(cats.length);
           localStorage.setItem('cats_cnt', cats.length);
           localStorage.setItem('start_cats_cnt', cats.length);
           if(cats.length>0){
@@ -2106,7 +2106,7 @@
     function getProductsByCategory(){
       console.log('getProductsByCategory');
       $.ajax({
-        url: "index.php?route=catalog/simplepars&get_prods=28&{{ adap['token']}}",
+        url: "index.php?route=catalog/simplepars&get_prods={{ dn_id}}&{{ adap['token']}}",
         success: function(data){
           console.log(data);
           if(data !== 'false'){
