@@ -1,11 +1,16 @@
 <?php
-ini_set('error_reporting', E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+//ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
 ignore_user_abort(true);
 ini_set("max_execution_time", "600");
 set_time_limit(600);
-
+require_once DIR_SYSTEM . 'library/phpQuery/ostap-functions.php';
+//подключим phpQuery
+require_once DIR_SYSTEM . 'library/phpQuery/phpQuery-onefile.php';
 class ControllerCatalogSimplePars extends Controller
 {
     private $error = array();
@@ -35,26 +40,152 @@ class ControllerCatalogSimplePars extends Controller
             }
         }
     
-        //Спарсим дополнительные категории товара для сайта eko-bike.ru
-        if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["add_cats"])) {
+//OSTAP CODE ####################################################################################
+        
+        //Сбор товаров определенной категории
+        if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["get_prods"])) {
+            
             //Зарузим модель для работы с категориями
             $this->load->model('catalog/category');
             $this->load->language('catalog/category');
             
-            //подключим phpQuery
-            require_once DIR_SYSTEM . 'library/phpQuery/phpQuery-onefile.php';
+            $dn_id = $this->request->get["get_prods"];
     
-            require_once DIR_SYSTEM . 'library/phpQuery/ostap-functions.php';
-            $memory = memory_get_usage();
-            define('START_MEMORY', $memory);
-            $start = microtime(true);
-            define('START_TIME', $start);
-            //Тест времени работы скрипта
-            register_shutdown_function('shutdown');
-            // назначаем обработчик сигнала
-            declare(ticks = 1);
-            pcntl_signal(SIGTERM, "sig_handler");
-            pcntl_signal(SIGINT, "sig_handler");
+            if($dn_id){
+                $cats_settings = $this->model_catalog_simplepars->getCatsSettings($dn_id);
+            }
+            
+            //зададим необходимые переменные
+            $clear_domain = $cats_settings['clear_domain'];
+            $domain = $clear_domain . '/';
+    
+            $parent_menu_category = htmlspecialchars_decode($cats_settings['sub_categories_a']);
+            //$parent_menu_category = 'header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > div.categories_menu__link > span.categories_menu__name';
+    
+            $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
+            $usleep = $cats_settings['usleep'];//10000 = 0.1 секунды.
+            $cat_link_end = $cats_settings['cat_link_end'];
+            $product_a = htmlspecialchars_decode($cats_settings['product_a']);
+            $product_name = htmlspecialchars_decode($cats_settings['product_name']);
+            $product_h4 = htmlspecialchars_decode($cats_settings['product_h4']);
+            $is_top = $cats_settings['is_top'];
+            $is_tag = $cats_settings['is_tag'];
+    
+            $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
+            $start_link = str_replace('page-all', '', $start_link);
+    
+            $start_link_href = str_replace($domain, '', $start_link);
+            $parent_menu_category_a = 'header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > a[href="'.$start_link_href.'"]';
+            
+            $pars_categories = $this->model_catalog_simplepars->GetSingleParsCategory($dn_id, $cat_d);
+            if($pars_categories){
+                foreach ($pars_categories as $pars_category){
+                    
+                    //работаем
+                    $up_produtcs = array();
+                    $cat_link = $pars_category['cat_link'].$cat_link_end;
+                    $cat_name = $pars_category['cat_name'];
+                    
+                    try {
+                        $file = file_get_contents($cat_link);
+                        $html = phpQuery::newDocument($file);
+                        //find all pagination hrefs
+                        $WhatFind = $html->find($product_a);
+                        foreach ($WhatFind as $element) {
+                            $pq = pq($element); // pq() - Это аналог $ в jQuery
+                            $href = $pq->attr('href');
+                            
+                            $h4 = $pq->find($product_h4);
+                            $pq_h4 = pq($h4);
+                            $name = $pq_h4->text();
+                
+                            if(!empty($name)){
+                                $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
+                                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
+                                if($product_id){
+                                    $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
+                                    $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name", true);
+                                    $up_produtcs[] = $product_id;
+                                    $this->ocLog('update_product_categories_log', $product_id, true);
+                                }
+                                else{
+                                    $like_product_id = $this->model_catalog_simplepars->GetLikeProductId($dn_id, $name, $pars_category['cat_id']);
+                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
+                                    if($like_product_id){
+                                        //если товар не найден по короткому заголовку поищем его по полному
+                                        try {
+                                            $prod_file = file_get_contents($clear_domain.$href);
+                                        }
+                                        catch(Exception $e){
+                                            $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                                            $err = $info . $e->getMessage();
+                                            $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+                                        }
+                            
+                                        $prod_html = phpQuery::newDocument($prod_file);
+                                        $prod_WhatFind = $prod_html->find($product_name);
+                                        foreach ($prod_WhatFind as $prod_element) {
+                                            $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
+                                            $prod_name = $prod_pq->text();
+                                            if(!empty($prod_name)){
+                                                $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $prod_name, $pars_category['cat_id']);
+                                                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
+                                                if($product_id){
+                                                    $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
+                                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
+                                                    $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name", true);
+                                                    $up_produtcs[] = $product_id;
+                                                    $this->ocLog('update_product_categories_log', $product_id, true);
+                                                }
+                                            }
+                                        }
+                                    }
+                        
+                        
+                                }
+                    
+                            }
+                        }
+            
+                        $this->model_catalog_simplepars->DeleteFromParsCats($dn_id, $cat_d, $pars_category['cat_id']);
+            
+                        $up_produtcs = array_unique($up_produtcs);
+                        $count_up_products = count($up_produtcs);
+            
+                        //Запишем в лог данные об обновленных товарах
+                        $this->ocLog('update_product_categories_log', '', true);
+                        $this->ocLog('update_product_categories_log', $up_produtcs, true);
+                        $this->ocLog('simple_pars_progress_add_cats_log', "Обновлено товаров: ".$count_up_products, true);
+                        $this->ocLog('update_product_categories_log', "Обновлено товаров: ".$count_up_products, true);
+            
+                        if(!empty($up_produtcs) and $count_up_products>0){
+                            echo json_encode($up_produtcs);
+                        }else{
+                            echo json_encode(array());
+                        }
+            
+                    }
+                    catch(Exception $e){
+                        $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
+                        $err = $info . $e->getMessage();
+                        $this->ocLog('simple_pars_add_cats_error_log', $err, true);
+                    }
+                    //работаем КОНЕЦ
+                }
+            }else{
+                echo 'false';
+            }
+    
+            die();
+        }
+        //Сбор товаров определенной категории КОНЕЦ
+    
+        //Сбор дочерних категорий проэкта
+        if ($this->request->server["REQUEST_METHOD"] == "GET" && isset($this->request->get["add_cats"])) {
+            //Зарузим модель для работы с категориями
+            $this->load->model('catalog/category');
+            $this->load->language('catalog/category');
             
             $dn_id = $this->request->get["add_cats"];
             if($dn_id){
@@ -78,33 +209,25 @@ class ControllerCatalogSimplePars extends Controller
             $is_tag = $cats_settings['is_tag'];
             
             $start_link = $this->model_catalog_simplepars->GetStartLink($dn_id);
-            //$start_link = 'https://eko-bike.ru/elektrovelosipedyi/fatbike/';
             $start_link = str_replace('page-all', '', $start_link);
     
             $start_link_href = str_replace($domain, '', $start_link);
             $parent_menu_category_a = 'header.header > div.header__bottom > div.fn_header__sticky > div.container > div.header__bottom_panel > nav.categories_nav > div.categories_nav__menu > ul.categories_menu > li.menu_eventer > a[href="'.$start_link_href.'"]';
             
-            show("Сбор категорий по ссылке: ".$start_link);
             $this->ocLog('simple_pars_progress_add_cats_log', "Сбор категорий по ссылке: ".$start_link, true);
             
             if(!empty($start_link) and strstr($start_link, $clear_domain)){
-                
                 $cat_d = $this->model_catalog_simplepars->GetParentCat($dn_id);
-                
-                
                 //начнем парсинг
                 try {
                     if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                     $file = file_get_contents($start_link);
-                    //$file = file_get_contents('https://eko-bike.ru/elektrovelosipedyi/fatbike/');
-                    //$file = file_get_contents('https://eko-bike.ru/gruzovie-elektricheskie-telezhki/');
                 }
                 catch(Exception $e){
                     $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
                     $err = $info . $e->getMessage();
                     $this->ocLog('simple_pars_add_cats_error_log', $err, true);
                 }
-                
                 
                 $html = phpQuery::newDocument($file);
                 //find all hrefs
@@ -143,9 +266,6 @@ class ControllerCatalogSimplePars extends Controller
                 }
                 else{
                     
-                    //$find = $html->find($parent_menu_category_a)->parent()->html();
-                    //dump($find);
-                    
                     $WhatFind = $html->find($parent_menu_category_a)->parent()->find('div a');
                     foreach ($WhatFind as $element) {
                         $pq = pq($element); // pq() - Это аналог $ в jQuery
@@ -158,30 +278,9 @@ class ControllerCatalogSimplePars extends Controller
                         }
                     }
                     
-                    
-                    /*
-                    //find all buttons
-                    $WhatFind = '';
-                    $WhatFind = $html->find($parent_menu_category_a)->parent()->find('.menu_group__item--3 button');
-                    if(!empty($WhatFind->html())){
-                        foreach ($WhatFind as $element) {
-                            $pq = pq($element); // pq() - Это аналог $ в jQuery
-                            $href = $pq->attr('value');
-                            if(!empty($href) and strlen($href)>21){
-                                $SubCategoriesLinks[] = array(
-                                    'name' => trim($pq->text()),
-                                    'href' => $href
-                                );
-                            }
-                        }
-                    }
-                    */
-                    
                 }
                 
-                //dump($SubCategoriesLinks);
                 $this->ocLog('SubCategoriesLinks', $SubCategoriesLinks, false);
-                //die();
     
                 if(!empty($SubCategoriesLinks)){
                     $this->model_catalog_simplepars->DeleteAllParsCats($dn_id);
@@ -238,153 +337,19 @@ class ControllerCatalogSimplePars extends Controller
                 //Работаем с товарами
                 $pars_categories = $this->model_catalog_simplepars->GetParsCats($dn_id, $cat_d);
                 $this->ocLog('pars_categories', $pars_categories, false);
-                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
                 
-                $up_produtcs = array();
-                //$dont_up_produtcs = array();
-                $cnt = 0;
-                foreach ($pars_categories as $pars_category){
-                    //if($cnt>2){die();}//zakomentit
-                    //if($cnt>2){break;}//zakomentit
-                    //начнем парсинг товаров
-                    $cat_link = $pars_category['cat_link'].$cat_link_end;
-                    $cat_name = $pars_category['cat_name'];
-    
-                    try {
-                        if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                        $file = file_get_contents($cat_link);
-    
-                        $html = phpQuery::newDocument($file);
-                        //find all pagination hrefs
-                        $WhatFind = $html->find($product_a);
-                        foreach ($WhatFind as $element) {
-                            $pq = pq($element); // pq() - Это аналог $ в jQuery
-                            $href = $pq->attr('href');
-        
-                            $h4 = $pq->find($product_h4);
-                            $pq_h4 = pq($h4);
-                            $name = $pq_h4->text();
-        
-                            if(!empty($name)){
-                                $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $name, $pars_category['cat_id']);
-                                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                if($product_id){
-                                    $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                    show("Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name");
-                                    $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name", true);
-                                    $up_produtcs[] = $product_id;
-                                    $this->ocLog('update_product_categories_log', $product_id, true);
-                                }
-                                else{
-                                    $like_product_id = $this->model_catalog_simplepars->GetLikeProductId($dn_id, $name, $pars_category['cat_id']);
-                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                    if($like_product_id){
-                                        //если товар не найден по короткому заголовку поищем его по полному
-                                        try {
-                                            if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                            $prod_file = file_get_contents($clear_domain.$href);
-                                        }
-                                        catch(Exception $e){
-                                            $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
-                                            $err = $info . $e->getMessage();
-                                            $this->ocLog('simple_pars_add_cats_error_log', $err, true);
-                                        }
-                    
-                                        $prod_html = phpQuery::newDocument($prod_file);
-                    
-                                        $prod_WhatFind = $prod_html->find($product_name);
-                                        foreach ($prod_WhatFind as $prod_element) {
-                                            $prod_pq = pq($prod_element); // pq() - Это аналог $ в jQuery
-                                            $prod_name = $prod_pq->text();
-                                            if(!empty($prod_name)){
-                                                $product_id = $this->model_catalog_simplepars->GetProductId($dn_id, $prod_name, $pars_category['cat_id']);
-                                                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                                if($product_id){
-                                                    $this->model_catalog_simplepars->UpdateProductCategories($product_id, $pars_category['cat_id']);
-                                                    if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                                                    show("Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name");
-                                                    $this->ocLog('simple_pars_progress_add_cats_log', "Товару: $prod_name с id - $product_id добавлена категория: ".$pars_category['cat_id']." под названием $cat_name", true);
-                                                    $up_produtcs[] = $product_id;
-                                                    $this->ocLog('update_product_categories_log', $product_id, true);
-                                                }
-                                            }
-                                        }
-                                    }
-                
-                
-                                }
-            
-                            }
-        
-                            //Запуск сборщика мусора для очистки памяти
-                            //time_nanosleep(0, 1000000); gc_collect_cycles();
-                        }
-                        
-                    }
-                    catch(Exception $e){
-                        $info = 'В методе: ' . __FUNCTION__ . ' около строки: ' .  __LINE__ . ' произошла ошибка';
-                        $err = $info . $e->getMessage();
-                        $this->ocLog('simple_pars_add_cats_error_log', $err, true);
-                    }
-                    
-                    $cnt++;
-                    //Запуск сборщика мусора для очистки памяти
-                    usleep(50000); gc_collect_cycles();
+                if($pars_categories){
+                    echo json_encode($pars_categories);
+                }else{
+                    echo json_encode(array());
                 }
                 
-               
-                $up_produtcs = array_unique($up_produtcs);
-                $count_up_products = count($up_produtcs);
-                
-                //Пройдем товары что не были найдены по названию из страницы категории
-                
-                $excluded_products = $this->model_catalog_simplepars->GetExcludedProducts($dn_id);
-                if(isset($usleep) and !empty($usleep)){usleep($usleep);}
-                $this->ocLog('excluded_products_log', $excluded_products, false);//ubrat
-                
-                if($excluded_products){
-                    $count_excluded_products = count($excluded_products);
-                }
-                
-                if(!empty($count_excluded_products)){
-                    $count_all_products = $count_up_products + $count_excluded_products;
-                }
-                
-                //Запишем в лог данные об обновленных товарах
-                $this->ocLog('update_product_categories_log', '', false);
-                $this->ocLog('update_product_categories_log', $up_produtcs, true);
-                $this->ocLog('simple_pars_progress_add_cats_log', "Обновлено товаров: ".$count_up_products, true);
-                $this->ocLog('update_product_categories_log', "Обновлено товаров: ".$count_up_products, true);
-    
-                if(isset($count_excluded_products)){
-                    $this->ocLog('simple_pars_progress_add_cats_log', "Пропущено товаров без дочерних категорий: ".$count_excluded_products, true);
-                    $this->ocLog('update_product_categories_log', "Пропущено товаров без дочерних категорий: ".$count_excluded_products, true);
-                }
-                
-                if(isset($count_all_products)){
-                    $this->ocLog('simple_pars_progress_add_cats_log', "Всего товаров пройдено скриптом: ".$count_all_products, true);
-                    $this->ocLog('update_product_categories_log', "Всего товаров пройдено скриптом: ".$count_all_products, true);
-                }
-                
-                
-            }
-    
-            $admin_emails = $this->model_catalog_simplepars->GetAdminEmails();
-            if(isset($count_excluded_products) and isset($count_all_products)){
-                foreach ($admin_emails as $admin_email){
-                    mail($admin_email['email'], "Сбор категорий simplepars проэкта $dn_id закончен!", "Обновлено товаров: $count_up_products " . PHP_EOL . "Пропущено товаров без дочерних категорий: $count_excluded_products " . PHP_EOL . "Всего товаров пройдено скриптом: $count_all_products " . PHP_EOL . "Лог файл: https://elektro-kolesa.ru/storage/logs/update_product_categories_log");
-                }
-                die("<strong> Обновлено товаров: $count_up_products </strong><br><strong>Пропущено товаров без дочерних категорий: $count_excluded_products </strong><br><strong>Всего товаров пройдено скриптом: $count_all_products </strong><br><a target='_blank' href='https://elektro-kolesa.ru/storage/logs/update_product_categories_log'>Лог файл</a>");
-            }else{
-                foreach ($admin_emails as $admin_email){
-                    mail($admin_email['email'], "Сбор категорий simplepars проэкта $dn_id закончен!", "Обновлено товаров: $count_up_products " . PHP_EOL . "Лог файл: https://elektro-kolesa.ru/storage/logs/update_product_categories_log");
-                }
-                die("<strong> Обновлено товаров: $count_up_products </strong>");
+                die();
             }
             
         }
-        //Спарсим дополнительные категории товара для сайта eko-bike.ru КОНЕЦ
+        //Сбор дочерних категорий проэкта КОНЕЦ
+     //OSTAP CODE END ############################################################################
         
         
         $data["dn_add_link"] = $this->url->link("catalog/simplepars/dnadd", $adap["token"], true);

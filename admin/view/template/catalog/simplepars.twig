@@ -89,8 +89,8 @@
                     <i class="fa fa-pencil" aria-hidden="true"></i></a>
                 </td>
                 <td class="text-right">
-                  <!--<a onclick="add_cats({{ dn['dn_id'] }})" data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>-->
-                  <a target="_blank" href="index.php?route=catalog/simplepars&add_cats={{ dn['dn_id'] }}&{{ adap.token }} " data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                  <a onclick="get_cats({{ dn['dn_id'] }})" data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                  <!--<a target="_blank" href="index.php?route=catalog/simplepars&add_cats={{ dn['dn_id'] }}&{{ adap.token }} " data-toggle="tooltip" class="btn btn-primary" data-original-title="Добавить категории к товарам проэкта {{ dn['dn_id'] }}"><i class="fa fa-plus" aria-hidden="true"></i></a>-->
                 </td>
               </tr>
               {% endfor %}
@@ -104,13 +104,14 @@
   </div>
 
 <script>
-  function add_cats(add_cats) {
+  function get_cats(add_cats) {
     $.ajax({
       url: 'index.php?route=catalog/simplepars&add_cats='+add_cats+'&{{ adap.token }}',
-      success: function(){
+      success: function(cats){
+        console.log(cats);
       }
     });
-    alert('Сбор категорий запущен. Результат обработки будет отправлен на email администраторов!');
+
   }
 </script>
 {{ footer }} 

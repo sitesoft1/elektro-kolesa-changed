@@ -1211,9 +1211,6 @@ public function GetParamsetup($dn_id){
 
 	public function DeleteParsLogs(){
 		$files = glob(DIR_LOGS."*_log.txt");
-		
-		var_dump($files);
-		
 		foreach($files as $file){
 			unlink($file);
 		}
@@ -1249,6 +1246,10 @@ public function GetParamsetup($dn_id){
 		return $category_id;
 	}
 	
+	public function DeleteFromParsCats($dn_id, $cat_d, $category_id){
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "pars_cats` WHERE `dn_id` = '" . (int)$dn_id . "' AND `parent_cat_id` = '" . (int)$cat_d . "' AND `cat_id` = '" . (int)$category_id . "'");
+	}
+	
 	public function GetParsCat($dn_id, $cat_d, $category_id){
 		$query = $this->db->query("SELECT `id` FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d' AND `cat_id`='$category_id' LIMIT 1");
 		if( $query->num_rows > 0 and isset($query->row['id']) ){
@@ -1260,6 +1261,15 @@ public function GetParamsetup($dn_id){
 	
 	public function GetParsCats($dn_id, $cat_d){
 		$query = $this->db->query("SELECT * FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d'");
+		if( $query->num_rows > 0 ){
+			return $query->rows;
+		}else{
+			return false;
+		}
+	}
+	
+	public function GetSingleParsCategory($dn_id, $cat_d){
+		$query = $this->db->query("SELECT * FROM `". DB_PREFIX ."pars_cats` WHERE `dn_id`='$dn_id' AND `parent_cat_id`='$cat_d' LIMIT 1");
 		if( $query->num_rows > 0 ){
 			return $query->rows;
 		}else{
@@ -1309,6 +1319,7 @@ public function GetParamsetup($dn_id){
 			return false;
 		}
 	}
+	
 //Ostap parser END.
 
 #Получение параметра который редактируем

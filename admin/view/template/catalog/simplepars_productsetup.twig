@@ -20,6 +20,11 @@
                 data-original-title="Обновить страницу">
           <i class="fa fa-refresh"></i>
         </button>
+
+        <button name="get_categories" id="get_categories" type="submit" data-toggle="tooltip" title="" class="btn btn-info"
+                data-original-title="Добавить категории к товарам">
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
       </div>
       <h1>SimplePars</h1>
       <!-- BREADCRUMBS -->
@@ -2074,6 +2079,45 @@
 </script>
 <script type="text/javascript">
   $(document).ready(function () {
+
+    //ostap code
+    $("#get_categories").bind("click", function () {
+
+
+      $.ajax({
+        url: "index.php?route=catalog/simplepars&add_cats={{ dn_id}}&{{ adap['token']}}",
+        success: function(data){
+          //console.log(data);
+          cats = $.parseJSON(data);
+          //console.log(cats);
+          console.log(cats.length);
+          if(cats.length>0){
+            getProductsByCategory();
+          }
+        }
+      });
+
+
+    });
+
+    function getProductsByCategory(){
+      $.ajax({
+        url: "index.php?route=catalog/simplepars&get_prods={{ dn_id}}&{{ adap['token']}}",
+        success: function(data){
+          console.log(data);
+          if(data != 'false'){
+            up_produtcs = $.parseJSON(data);
+            console.log(up_produtcs);
+            console.log(up_produtcs.length);
+            getProductsByCategory();
+          }
+
+        }
+      });
+
+    }
+    //ostap code END
+
       $("#pars_data_start").bind("click", function () {
         var iter = 0;
         var time1 = new Date().getTime();//Работа с временем. Получаем время начала парсинга.
@@ -2091,7 +2135,7 @@
           dataType: "html",
             success: function (data) {
               answ = $.parseJSON(data);
-              console.log(answ);
+              //console.log(answ);
               //работа с временем
               var time2 = new Date().getTime();//Получаем время окончания парсинга одной ссылки.
               var time = secondsToHms(time1, time2, answ.other.clink.link_count, iter);
@@ -2164,14 +2208,14 @@
     get_url_stats();
     $("#pross").css("width","0%");
     $("#info_count").text("");
-    console.log(result);
+   // console.log(result);
   });
 
   function get_url_stats(){
     data = getSettingUrl();
     urls = url_ajax(data);
     showUrlsStats(urls);
-    console.log(urls);
+    //console.log(urls);
   };
 
   function url_ajax(data){
@@ -2196,7 +2240,7 @@
     data_form['link_list'] = $("#link_list").val();
     data_form['link_error'] = $("#link_error").val();
 
-    console.log(data_form);
+    //console.log(data_form);
     return data_form;
   }
 

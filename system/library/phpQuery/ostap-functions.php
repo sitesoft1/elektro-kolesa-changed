@@ -100,7 +100,7 @@ function createPrice($offer_price, $xml_rate, $xml_markup)
     return $rezult;
 }
 
-
+/*
 function shutdown()
 {
     $time = date('H-i-s');
@@ -152,7 +152,7 @@ function sig_handler($signo)
     file_put_contents(LOG_DIR . '/sig_handler_log.txt', $err.PHP_EOL);
     exit;
 }
-
+*/
 
 function addCategory($data) {
     $this->db->query("INSERT INTO " . DB_PREFIX . "category SET parent_id = '" . (int)$data['parent_id'] . "', `top` = '" . (isset($data['top']) ? (int)$data['top'] : 0) . "', `column` = '" . (int)$data['column'] . "', sort_order = '" . (int)$data['sort_order'] . "', status = '" . (int)$data['status'] . "', noindex = '" . (int)$data['noindex'] . "', date_modified = NOW(), date_added = NOW(), `is_tag` = '" . (isset($data['is_tag']) ? (int)$data['is_tag'] : 0) . "'");
