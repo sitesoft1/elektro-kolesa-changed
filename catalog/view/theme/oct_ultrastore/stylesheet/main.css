@@ -7405,6 +7405,11 @@ span.simple-step-delimiter:before {
 		font-size: 14px;
 	}
 
+	.us-module-title h3, a {
+		font-weight: 600 !important;
+		font-size: 14px !important;
+	}
+
 	/** Стили слайдера в категории КОНЕЦ **/
 
 

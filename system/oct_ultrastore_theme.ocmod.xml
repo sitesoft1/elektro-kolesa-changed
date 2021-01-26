@@ -1692,7 +1692,7 @@
 						{% for oct_page in categories_page %}
 							{% if oct_page.page_links is not empty %}
                                         <li class="category-landing-links-item">
-                                            <span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span>
+                                            <noindex><span class="category-landing-links-item-title">{{ oct_page.page_group[language_id] }}</span></noindex>
                                             {% for link in oct_page.page_links %}
                                                 {% if link[language_id].link is not empty %}
                                                     <a href="{{ link[language_id].link }}" class="category-landing-links-item-link d-flex-inline align-items-center" title="{{ link[language_id].title }}"><span>{{ link[language_id].title }}</span></a>

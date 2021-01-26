@@ -175,7 +175,7 @@
 								</div>
 								<div class="us-module-caption d-flex flex-column">
 									<div class="us-module-title flex-grow-1">
-										<a href="{{ product.href }}">{{ product.name }}</a>
+										<h3><strong><a href="{{ product.href }}">{{ product.name }}</a></strong></h3>
 									</div>
 									{% if product.oct_model is not empty %}
 									<div class="us-module-model">{{ oct_view_model_cat }}{{ product.oct_model }}</div>
@@ -209,7 +209,7 @@
 										{% endif %}
 									</div>
 									{% endif %}
-									<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a>
+									<noindex><a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn button-cart">{{ button_cart }}</a></noindex>
 									<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">Купить</a>
 								</div>
 							</div>
