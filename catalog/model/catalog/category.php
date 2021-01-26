@@ -31,6 +31,18 @@ class ModelCatalogCategory extends Model {
         }
         
     }
+    
+    public function getCategoryAddToStart($category_id) {
+        
+        $query = $this->db->query("SELECT `add_to_start` FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+        
+        if($query->num_rows>0 and isset($query->row['add_to_start'])){
+            return $query->row['add_to_start'];
+        }else{
+            return '';
+        }
+        
+    }
 
 	public function getCategoryFilters($category_id) {
 		$implode = array();

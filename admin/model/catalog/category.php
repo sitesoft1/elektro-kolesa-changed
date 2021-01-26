@@ -13,8 +13,12 @@ class ModelCatalogCategory extends Model {
 		}
         
         //замена слов в названии товара в зависимости от категории
-        if (isset($data['replacement'])) {
+        if (isset($data['replacement']) and isset($data['add_to_start'])) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "', add_to_start = '" . $this->db->escape($data['add_to_start']) . "'");
+        }else if(isset($data['replacement'])){
             $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "'");
+        }else if (isset($data['add_to_start'])) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', add_to_start = '" . $this->db->escape($data['add_to_start']) . "'");
         }
         //замена слов в названии товара в зависимости от категории КОНЕЦ
 
@@ -94,9 +98,16 @@ class ModelCatalogCategory extends Model {
 		}
         
         //замена слов в названии товара в зависимости от категории
-        if (isset($data['replacement'])) {
+        if (isset($data['replacement']) or isset($data['add_to_start'])) {
             $this->db->query("DELETE FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
-            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "'");
+    
+            if (isset($data['replacement']) and isset($data['add_to_start'])) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "', add_to_start = '" . $this->db->escape($data['add_to_start']) . "'");
+            }else if(isset($data['replacement'])){
+                $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', replacement = '" . $this->db->escape($data['replacement']) . "'");
+            }else if (isset($data['add_to_start'])) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules SET category_id = '" . (int)$category_id . "', add_to_start = '" . $this->db->escape($data['add_to_start']) . "'");
+            }
         }
         //замена слов в названии товара в зависимости от категории КОНЕЦ
 
@@ -383,6 +394,18 @@ class ModelCatalogCategory extends Model {
         
         if($query->num_rows>0 and isset($query->row['replacement'])){
             return $query->row['replacement'];
+        }else{
+            return '';
+        }
+        
+    }
+    
+    public function getCategoryAddToStart($category_id) {
+        
+        $query = $this->db->query("SELECT `add_to_start` FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id = '" . (int)$category_id . "'");
+        
+        if($query->num_rows>0 and isset($query->row['add_to_start'])){
+            return $query->row['add_to_start'];
         }else{
             return '';
         }

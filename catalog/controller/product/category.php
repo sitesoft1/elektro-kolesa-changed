@@ -270,6 +270,8 @@ class ControllerProductCategory extends Controller {
             if(isset($replacement) and !empty($replacement)){
                 $replacement_arr = explode(PHP_EOL, $replacement);
             }
+            
+            $add_to_start = $this->model_catalog_category->getCategoryAddToStart($category_id);
             //замена слов в названии товара в зависимости от категории КОНЕЦ
 
 			foreach ($results as $result) {
@@ -313,6 +315,10 @@ class ControllerProductCategory extends Controller {
                             }
                         }
                     }
+                }
+                
+                if(isset($add_to_start) and !empty($add_to_start)){
+                    $result['name'] = $add_to_start . " " . $result['name'];
                 }
                 //замена слов в названии товара в зависимости от категории КОНЕЦ
                 

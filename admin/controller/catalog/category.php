@@ -328,6 +328,14 @@ class ControllerCatalogCategory extends Controller {
         } else {
             $data['replacement'] = '';
         }
+        
+        if (isset($this->request->post['add_to_start'])) {
+            $data['add_to_start'] = $this->request->post['add_to_start'];
+        } elseif (isset($this->request->get['category_id'])) {
+            $data['add_to_start'] = $this->model_catalog_category->getCategoryAddToStart($this->request->get['category_id']);
+        } else {
+            $data['add_to_start'] = '';
+        }
 		//замена слов в названии товара в зависимости от категории КОНЕЦ
 
 		if (isset($this->request->post['parent_id'])) {
