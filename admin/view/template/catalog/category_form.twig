@@ -213,24 +213,57 @@
                 </div>
               </div>
 
+              <script>
+                function add_name(){
+                  var name = $('#input-name1').val();
+                  $('#add_to_start').val(name);
+                }
+
+                function add_h1(){
+                  var meta_h1 = $('#input-meta-h11').val();
+                  $('#add_to_start').val(meta_h1);
+                }
+
+                function add_name_to_replacement(){
+                  var name = $('#input-name1').val();
+                  var input_replacement = $('#input-replacement').val();
+                  var arr = name.split(' ');
+                  var final_name = '';
+                  arr.forEach((item, index, array) => {
+                      final_name += item+'|\r\n';
+                  });
+                  final_name = final_name.replace(/\r\n+/g, '\r\n');
+                  final_name = final_name.trim();
+                  var final_string = input_replacement + '\r\n' + final_name;
+                  final_string = final_string.replace(/\r\n+/g,'\r\n');
+                  final_string = final_string.trim();
+                  $('#input-replacement').val(final_string);
+                }
+
+                function add_h1_to_replacement(){
+                  var meta_h1 = $('#input-meta-h11').val();
+                  var input_replacement = $('#input-replacement').val();
+                  var arr = meta_h1.split(' ');
+                  var final_name = '';
+                  arr.forEach((item, index, array) => {
+                    final_name += item+'|\r\n';
+                  });
+                  final_name = final_name.replace(/\r\n+/g, '\r\n');
+                  final_name = final_name.trim();
+                  var final_string = input_replacement + '\r\n' + final_name;
+                  final_string = final_string.replace(/\r\n+/g,'\r\n');
+                  final_string = final_string.trim();
+                  $('#input-replacement').val(final_string);
+                }
+              </script>
+
               <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-replacement"><span data-toggle="tooltip" title="Правила замены слов в названиях товаров. Каждое правило с новой строки. Пример: что заменить|на что заменить">Замена слов в названиях</span></label>
+                <label class="col-sm-2 control-label" for="input-replacement"><span data-toggle="tooltip" title="Правила замены слов в названиях товаров. Каждое правило с новой строки. Пример: что заменить|на что заменить">Замена слов в названиях подставить: (<a onclick="add_name_to_replacement(); return false;" href="">Название категории</a>) или (<a onclick="add_h1_to_replacement(); return false;" href="">HTML-тег H1</a>)</span></label>
                 <div class="col-sm-10">
                   <textarea name="replacement" rows="5" placeholder="Слово|Замена" id="input-replacement" class="form-control">{% if replacement %}{{ replacement }}{% endif %}</textarea>
                 </div>
               </div>
 
-              <script>
-                  function add_name(){
-                    var name = $('#input-name1').val();
-                    $('#add_to_start').val(name);
-                  }
-
-                  function add_h1(){
-                    var meta_h1 = $('#input-meta-h11').val();
-                    $('#add_to_start').val(meta_h1);
-                  }
-              </script>
 
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-sort-order">Подставить в начало родительской (<a onclick="add_name(); return false;" href="">Название категории</a>) или (<a onclick="add_h1(); return false;" href="">HTML-тег H1</a>)</label>
