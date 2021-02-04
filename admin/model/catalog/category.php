@@ -244,6 +244,9 @@ class ModelCatalogCategory extends Model {
 	}
     
     public function updateCategoryChildrens($category_id, $data) {
+	    
+	    
+	    
         $query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "category WHERE parent_id = '" . (int)$category_id . "'");
     
         foreach ($query->rows as $row) {
