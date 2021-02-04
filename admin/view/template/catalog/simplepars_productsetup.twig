@@ -2085,7 +2085,7 @@
       localStorage.setItem('up_produtcs_all', 0);
       var up_produtcs = '';
       var cats = '';
-
+      
       $.ajax({
         url: "index.php?route=catalog/simplepars&add_cats={{ dn_id}}&{{ adap['token']}}",
         success: function(data){

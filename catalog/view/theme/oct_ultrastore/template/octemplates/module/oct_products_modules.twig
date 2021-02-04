@@ -51,7 +51,7 @@
 					{% endif %}
 				</div>
 				{% endif %}
-				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a>
+				<noindex><a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a></noindex>
 				<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">{{ oct_product_quickbuy }}</a>
 			</div>
 			{% endfor %}
@@ -118,7 +118,7 @@
 					{% endif %}
 				</div>
 				{% endif %}
-				<a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a>
+				<noindex><a href="javascript:void(0);" onclick="cart.add('{{ product.product_id }}');" class="us-module-cart-btn-home button-cart">{{ button_cart }}</a></noindex>
 				<a href="javascript:void(0);" onclick="octPopPurchase('{{ product.product_id }}');" class="us-product-btn-quick button-one-click button-cart">Купить</a>
 			</div>
 		</div>
