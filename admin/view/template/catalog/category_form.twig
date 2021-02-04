@@ -220,12 +220,25 @@
                 </div>
               </div>
 
+              <script>
+                  function add_name(){
+                    var name = $('#input-name1').val();
+                    $('#add_to_start').val(name);
+                  }
+
+                  function add_h1(){
+                    var meta_h1 = $('#input-meta-h11').val();
+                    $('#add_to_start').val(meta_h1);
+                  }
+              </script>
+
               <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-sort-order">Подставить в начало</label>
+                <label class="col-sm-2 control-label" for="input-sort-order">Подставить в начало родительской (<a onclick="add_name(); return false;" href="">Название категории</a>) или (<a onclick="add_h1(); return false;" href="">HTML-тег H1</a>)</label>
                 <div class="col-sm-10">
                   <input id="add_to_start" type="text" name="add_to_start" value="{{ add_to_start }}" placeholder="Подставить в начало названия" class="form-control">
                 </div>
               </div>
+
 
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="add_to_start_name"><span data-toggle="tooltip" title="В поле 'Подставить в начало' дочерних категорий будет прописано содержимое поля которое Вы выберите">Прописать в поле дочерних категорий 'Подставить в начало' данные из поля:</span></label>
@@ -240,20 +253,7 @@
                 </div>
               </div>
 
-              <script>
-                $(document).ready(function(){
-                    $('#add_to_start_name').on('change', function(){
-                      var add_to_start_name = $('#add_to_start_name').val();
-                      var name = $('#input-name1').val();
-                      var meta_h1 = $('#input-meta-h11').val();
-                        if(add_to_start_name == 'name'){
-                            $('#add_to_start').val(name);
-                        }else if(add_to_start_name == 'meta_h1'){
-                            $('#add_to_start').val(meta_h1);
-                        }
-                    });
-                });
-              </script>
+
               <!-- замена слов в названии товара в зависимости от категории КОНЕЦ -->
 
             </div>
