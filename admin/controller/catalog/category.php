@@ -449,6 +449,14 @@ class ControllerCatalogCategory extends Controller {
         } else {
             $data['add_to_start_name'] = 0;
         }
+        
+        if (isset($this->request->post['add_to_replacement'])) {
+            $data['add_to_replacement'] = $this->request->post['add_to_replacement'];
+        } elseif (!empty($category_info)) {
+            //$data['add_to_replacement'] = $category_info['add_to_replacement'];
+        } else {
+            $data['add_to_replacement'] = 0;
+        }
         //Отметки об обновлении дочерних категоиий END
 
 		if (isset($this->request->post['column'])) {

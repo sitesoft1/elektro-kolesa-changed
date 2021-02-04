@@ -244,15 +244,11 @@ class ModelCatalogCategory extends Model {
 	}
     
     public function updateCategoryChildrens($category_id, $data) {
-	    
         $query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "category WHERE parent_id = '" . (int)$category_id . "'");
-    
         foreach ($query->rows as $row) {
-            
             $childrens_meta = $this->getCategoryNameH1($row['category_id']);
-            
                 foreach ($childrens_meta as $child_meta){
-                    
+                    //подстановка в начало
                     if(isset($data['add_to_start_name']) and $data['add_to_start_name']=='name') {
                         $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
                         if ($query_check->num_rows > 0) {
@@ -269,8 +265,57 @@ class ModelCatalogCategory extends Model {
                         }
                     }
                     
+                    //замена слов
+                    if(isset($data['add_to_replacement']) and $data['add_to_replacement']=='only_replacement') {
+                        $replacement = $data['replacement'];
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET replacement='" . $replacement . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '" . $replacement . "', '')");
+                        }
+                    }elseif(isset($data['add_to_replacement']) and $data['add_to_replacement']=='name') {
+                        $replacement = $data['replacement'];
+                        $name_arr = explode(' ', $child_meta['name']);
+                        foreach ($name_arr as $word){
+                            $replacement .= PHP_EOL.$word.'|';
+                        }
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET replacement='" . $replacement . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '" . $replacement . "', '')");
+                        }
+                    }elseif(isset($data['add_to_replacement']) and $data['add_to_replacement']=='meta_h1') {
+                        $replacement = $data['replacement'];
+                        $meta_h1 = explode(' ', $child_meta['meta_h1']);
+                        foreach ($meta_h1 as $word){
+                            $replacement .= PHP_EOL.$word.'|';
+                        }
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET replacement='" . $replacement . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '" . $replacement . "', '')");
+                        }
+                    }elseif(isset($data['add_to_replacement']) and $data['add_to_replacement']=='both') {
+                        $replacement = $data['replacement'];
+                        $name_arr = explode(' ', $child_meta['name']);
+                        foreach ($name_arr as $word){
+                            $replacement .= PHP_EOL.$word.'|';
+                        }
+                        $meta_h1 = explode(' ', $child_meta['meta_h1']);
+                        foreach ($meta_h1 as $word){
+                            $replacement .= PHP_EOL.$word.'|';
+                        }
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET replacement='" . $replacement . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '" . $replacement . "', '')");
+                        }
+                    }
                 }
-                
         }
     }
     
