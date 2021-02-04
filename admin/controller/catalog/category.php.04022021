@@ -432,16 +432,6 @@ class ControllerCatalogCategory extends Controller {
             $data['is_tag'] = 0;
         }
 		//Отметка что категория является тегом КОНЕЦ
-        
-        //Отметка об обновлении дочерних категоиий
-        if (isset($this->request->post['upchildren'])) {
-            $data['upchildren'] = $this->request->post['upchildren'];
-        } elseif (!empty($category_info)) {
-            //$data['upchildren'] = $category_info['upchildren'];
-        } else {
-            $data['upchildren'] = 0;
-        }
-        //Отметка об обновлении дочерних категоиий END
 
 		if (isset($this->request->post['column'])) {
 			$data['column'] = $this->request->post['column'];

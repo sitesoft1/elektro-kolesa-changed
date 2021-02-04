@@ -232,7 +232,32 @@ class ModelCatalogCategory extends Model {
 		if($this->config->get('config_seo_pro')){		
 		$this->cache->delete('seopro');
 		}
+		
+		//Обновление дочерних категорий
+        if (isset($data['upchildren'])) {
+            $this->ocLog('upchildren', 'Чекбокс отмечен!', true);
+            
+            $this->updateCategoryChildrens($category_id, $data);
+        }
+		//Обновление дочерних категорий КОНЕЦ
 	}
+    
+    public function updateCategoryChildrens($category_id, $data) {
+        $query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "category WHERE parent_id = '" . (int)$category_id . "'");
+    
+        foreach ($query->rows as $row) {
+            $this->ocLog('upchildren', $row['category_id'], true);
+            $this->getCategoryNameH1($row['category_id']);
+        }
+    }
+    
+    public function getCategoryNameH1($category_id) {
+        $query = $this->db->query("SELECT `name`, `meta_h1` FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");
+        
+        foreach ($query->rows as $row) {
+            $this->ocLog('upchildren', $row['name'].' - '.$row['meta_h1'], true);
+        }
+    }
 	
 	public function editCategoryStatus($category_id, $status) {
         $this->db->query("UPDATE " . DB_PREFIX . "category SET status = '" . (int)$status . "', date_modified = NOW() WHERE category_id = '" . (int)$category_id . "'");
@@ -536,4 +561,15 @@ class ModelCatalogCategory extends Model {
 		
 		return $article_related_data;
 	}
+    
+    //Функция логирования для Opencart
+    public function ocLog($filename, $data, $append=false)
+    {
+        if(!$append){
+            file_put_contents(DIR_LOGS . $filename . '.txt', var_export($data,true));
+        }else{
+            file_put_contents(DIR_LOGS . $filename . '.txt', var_export($data,true).PHP_EOL, FILE_APPEND);
+        }
+        
+    }
 }
