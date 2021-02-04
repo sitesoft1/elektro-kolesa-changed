@@ -1,4 +1,7 @@
 <?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 // *	@source		See SOURCE.txt for source and other copyright.
 // *	@license	GNU General Public License version 3; see LICENSE.txt
 
@@ -235,8 +238,6 @@ class ModelCatalogCategory extends Model {
 		
 		//Обновление дочерних категорий
         if (isset($data['upchildren'])) {
-            $this->ocLog('upchildren', 'Чекбокс отмечен!', true);
-            
             $this->updateCategoryChildrens($category_id, $data);
         }
 		//Обновление дочерних категорий КОНЕЦ
@@ -246,17 +247,35 @@ class ModelCatalogCategory extends Model {
         $query = $this->db->query("SELECT category_id FROM " . DB_PREFIX . "category WHERE parent_id = '" . (int)$category_id . "'");
     
         foreach ($query->rows as $row) {
-            $this->ocLog('upchildren', $row['category_id'], true);
-            $this->getCategoryNameH1($row['category_id']);
+            
+            $childrens_meta = $this->getCategoryNameH1($row['category_id']);
+            
+                foreach ($childrens_meta as $child_meta){
+                    
+                    if(isset($data['add_to_start_name']) and $data['add_to_start_name']=='name') {
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET add_to_start='" . $child_meta['name'] . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '', '" . $child_meta['name'] . "')");
+                        }
+                    }elseif(isset($data['add_to_start_name']) and $data['add_to_start_name']=='meta_h1') {
+                        $query_check = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_replacement_rules WHERE category_id='".$row['category_id']."'");
+                        if ($query_check->num_rows > 0) {
+                            $this->db->query("UPDATE " . DB_PREFIX . "category_replacement_rules SET add_to_start='" . $child_meta['meta_h1'] . "' WHERE category_id='" . $row['category_id'] . "'");
+                        } else {
+                            $this->db->query("INSERT INTO " . DB_PREFIX . "category_replacement_rules (category_id, replacement, add_to_start) VALUES('" . $row['category_id'] . "', '', '" . $child_meta['meta_h1'] . "')");
+                        }
+                    }
+                    
+                }
+                
         }
     }
     
     public function getCategoryNameH1($category_id) {
         $query = $this->db->query("SELECT `name`, `meta_h1` FROM " . DB_PREFIX . "category_description WHERE category_id = '" . (int)$category_id . "'");
-        
-        foreach ($query->rows as $row) {
-            $this->ocLog('upchildren', $row['name'].' - '.$row['meta_h1'], true);
-        }
+        return $query->rows;
     }
 	
 	public function editCategoryStatus($category_id, $status) {

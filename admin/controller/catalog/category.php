@@ -433,7 +433,7 @@ class ControllerCatalogCategory extends Controller {
         }
 		//Отметка что категория является тегом КОНЕЦ
         
-        //Отметка об обновлении дочерних категоиий
+        //Отметки об обновлении дочерних категоиий
         if (isset($this->request->post['upchildren'])) {
             $data['upchildren'] = $this->request->post['upchildren'];
         } elseif (!empty($category_info)) {
@@ -441,7 +441,15 @@ class ControllerCatalogCategory extends Controller {
         } else {
             $data['upchildren'] = 0;
         }
-        //Отметка об обновлении дочерних категоиий END
+        
+        if (isset($this->request->post['add_to_start_name'])) {
+            $data['add_to_start_name'] = $this->request->post['add_to_start_name'];
+        } elseif (!empty($category_info)) {
+            //$data['upchildren'] = $category_info['add_to_start_name'];
+        } else {
+            $data['add_to_start_name'] = 0;
+        }
+        //Отметки об обновлении дочерних категоиий END
 
 		if (isset($this->request->post['column'])) {
 			$data['column'] = $this->request->post['column'];
