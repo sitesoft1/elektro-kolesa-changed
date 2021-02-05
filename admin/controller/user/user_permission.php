@@ -355,7 +355,7 @@ class ControllerUserUserPermission extends Controller {
 			
 			$hidefiles = explode("/", $permission);
             
-			if ($hidefiles[1] == "module" or $hidefiles[1] == "payment" or $hidefiles[1] == "shipping") {
+            if (isset($hidefiles[1]) && ($hidefiles[1] == "module" or $hidefiles[1] == "payment" or $hidefiles[1] == "shipping")) {
 				if (!in_array($permission, $ignore)) {
 					$data['hiden'][] = $permission;
 				}
