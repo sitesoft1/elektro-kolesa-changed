@@ -7271,6 +7271,7 @@ span.simple-step-delimiter:before {
 	.product_category_div{
 		float: left;
 		margin-right: 6px;
+		margin-left: 40px;
 	}
 
 	.product_category_ul{

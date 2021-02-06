@@ -40,7 +40,7 @@
 											{% for oct_page in ch.oct_pages %}
 											{% if oct_page.page_links is not empty %}
 											<li class="group-title">
-												<noindex><strong>{{ oct_page.page_group[language_id] }}</strong></noindex>
+												<!--noindex--><strong>{{ oct_page.page_group[language_id] }}</strong><!--/noindex-->
 												{% for link in oct_page.page_links %}
 												<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
 												{% endfor %}
@@ -56,7 +56,7 @@
 										{% for oct_page in child.oct_pages %}
 											{% if oct_page.page_links is not empty %}
 											<li class="group-title">
-												<noindex><strong>{{ oct_page.page_group[language_id] }}</strong></noindex>
+												<!--noindex--><strong>{{ oct_page.page_group[language_id] }}</strong><!--/noindex-->
 												{% for link in oct_page.page_links %}
 												<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
 												{% endfor %}
@@ -73,7 +73,7 @@
 							{% for oct_page in category.oct_pages %}
 								{% if oct_page.page_links is not empty %}
 								<li class="group-title">
-									<noindex><strong>{{ oct_page.page_group[language_id] }}</strong></noindex>
+									<!--noindex--><strong>{{ oct_page.page_group[language_id] }}</strong><!--/noindex-->
 									{% for link in oct_page.page_links %}
 									<a href="{{ link[language_id].link }}" title="{{ link[language_id].title }}">{{ link[language_id].title }}</a>
 									{% endfor %}
