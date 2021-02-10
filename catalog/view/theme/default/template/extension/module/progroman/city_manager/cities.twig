@@ -14,19 +14,21 @@
             <input class="prmn-cmngr-cities__search form-control" type="text" placeholder="{{ text_search_placeholder }}">
           </div>
         </div>
-        <div class="row">
+
           {% for column in columns %}
-            <div class="col-xs-4">
-              {% for city in column %}
-                <div class="prmn-cmngr-cities__city">
-                  <a class="prmn-cmngr-cities__city-name" data-id="{{ city.fias_id }}">
-                    {{ city.name }}
-                  </a>
+            <div class="row">
+                <div class="col-xs-4">
+                  {% for city in column %}
+                    <div class="prmn-cmngr-cities__city">
+                      <a class="prmn-cmngr-cities__city-name" data-id="{{ city.fias_id }}">
+                        {{ city.name }}
+                      </a>
+                    </div>
+                  {% endfor %}
                 </div>
-              {% endfor %}
             </div>
           {% endfor %}
-        </div>
+
       </div>
     </div>
   </div>
