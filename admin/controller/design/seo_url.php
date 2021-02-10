@@ -541,4 +541,8 @@ class ControllerDesignSeoUrl extends Controller {
 
 		return !$this->error;
 	}
+	
+	public function generate_multi_seo_url(){
+	    echo 'Функция генерации урлов запущена!';
+    }
 }
